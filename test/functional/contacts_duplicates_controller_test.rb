@@ -3,8 +3,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,6 +63,24 @@ class ContactsDuplicatesControllerTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     User.current = nil
+  end
+
+  def test_get_index_duplicates
+    contact = Contact.find(3)
+    contact_clone = contact.dup
+    contact_clone.project = contact.project
+    contact_clone.save!
+
+    @request.session[:user_id] = 2
+    Setting.default_language = 'en'
+
+    get :index, :project_id => contact.project, :contact_id => 3
+    assert_response :success
+    assert_template :index
+    assert_select 'ul#contact_duplicates li', 1
+    assert_select 'ul#contact_duplicates li a', contact.name
+  ensure
+    contact_clone.delete
   end
 
   def test_get_merge_duplicates

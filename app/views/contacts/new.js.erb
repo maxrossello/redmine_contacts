@@ -2,3 +2,8 @@ $('#ajax-modal').html('<%= escape_javascript(render :partial => 'contacts/new_mo
 $('#ajax-modal #contact_data .extended').hide();
 $('#ajax-modal #contact_data #show_details_link').show();
 showModal('ajax-modal', '800px');
+
+$('#new_contact').submit( function(event) {
+  $('.file_selector').val('');
+  event.preventDefault();
+});

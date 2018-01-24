@@ -31,7 +31,7 @@
 								:id => contact.id},
 					:remote => true,
 					:method => :delete,
-					:confirm => l(:text_are_you_sure),
+					:data => {:confirm => l(:text_are_you_sure)},
   				 	:class  => "delete",
 	   				:title => l(:button_delete) ) %>
 

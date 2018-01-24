@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
 class CreateTags < ActiveRecord::Migration
-  require 'redmine_crm/rcrm_acts_as_taggable'
-
   def self.up
     # unless table_exists?(:viewings)
       ActiveRecord::Base.create_taggable_table

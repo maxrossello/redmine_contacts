@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,13 +47,13 @@ module RedmineContacts
         def contacts
           @contacts = []
           q = (params[:q] || params[:term]).to_s.strip
-            scope = Contact.includes(:avatar).where({})
-            scope = scope.limit(params[:limit] || 10)
-            scope = scope.companies if params[:is_company]
-            scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
-            q.split(' ').collect{ |search_string| scope = scope.live_search(search_string) } unless q.blank?
-            scope = scope.by_project(@project) if @project
-            @contacts = scope.to_a.sort!{|x, y| x.name <=> y.name }
+          scope = Contact.includes(:avatar).where({})
+          scope = scope.limit(params[:limit] || 10)
+          scope = scope.companies if params[:is_company]
+          scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
+          q.split(' ').collect{ |search_string| scope = scope.live_search(search_string) } unless q.blank?
+          scope = scope.by_project(@project) if @project
+          @contacts = scope.to_a.sort!{|x, y| x.name <=> y.name }
           render :layout => false, :partial => 'contacts'
         end
 

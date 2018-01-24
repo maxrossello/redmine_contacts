@@ -1,8 +1,43 @@
 == Redmine CRM plugin changelog
 
 Redmine CRM plugin - customer relationship management plugin for redmine
-Copyright (C) 2010-2016 Kirill Bezrukov
-http://www.redminecrm.com/
+Copyright (C) 2010-2017 RedmineUP
+http://www.redmineup.com/
+
+== 2017-07-07 v4.1.1
+
+* Redmine 3.4 support
+* New styles for monochrome tags
+* Fixed company rename bug
+* Email validation fix
+* Select2 drop box fix
+
+== 2017-05-30 v4.1.0
+
+* Added Select2 to contacts fields
+* Primary email was added to dublicate search
+* Chinese translation update
+* Fixed deal price precision bug
+* Fixed avatar upload on modal form
+* Fixed multivalues field import bug
+
+== 2017-03-02 v4.0.8
+
+* Fixed migration requirements with new redmine_crm gem
+
+== 2017-03-02 v4.0.7
+
+* Select2 control for selecting contacts and companies
+* Modal for adding contacts to deal
+* Fixed history log for done issue from contact page
+* Fixed delete confirmation message for contacts, deals and notes 
+* Serbian translations (Aleksandar Pavic)
+
+== 2017-02-07 v4.0.6
+
+* Deal lines with Products plugin
+* Email incorrect format validation
+* Fixed bulk edit tag fields
 
 == 2016-11-17 v4.0.5
 

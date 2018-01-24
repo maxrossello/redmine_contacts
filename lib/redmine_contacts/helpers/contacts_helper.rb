@@ -3,8 +3,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,11 +37,12 @@ module RedmineContacts
     end
 
     def tag_link(tag_name, options={})
-      style = RedmineContacts.settings[:monochrome_tags].to_i > 0 ? {} : {:style => "background-color: #{tag_color(tag_name)}"}
+
+      style = ContactsSetting.monochrome_tags? ? {:class => "tag-label"} : {:class => "tag-label-color", :style => "background-color: #{tag_color(tag_name)}"}
       tag_count = options.delete(:count)
-      tag_title = tag_count ? "#{tag_name} (#{tag_count})" : tag_name
-      link = link_to tag_title, contact_tag_url(tag_name), options
-      content_tag(:span, link, {:class => "tag-label-color"}.merge(style))
+      link = link_to tag_name, contact_tag_url(tag_name), options
+      link = link + content_tag(:span, "(#{tag_count})", :class => 'tag-count') if tag_count
+      content_tag(:span, link, {}.merge(style))
     end
 
     def tag_color(tag_name)
@@ -53,17 +54,17 @@ module RedmineContacts
     def tag_links(tag_list, options={})
       content_tag(
                 :span,
-                tag_list.map{|tag| tag_link(tag, options)}.join(' ').html_safe,
-                :class => "tag_list") if tag_list
+                safe_join(tag_list.map{|tag| tag_link(tag, options)}, ContactsSetting.monochrome_tags? ? ', ' : ' ').html_safe,
+                :class => "tag_list#{' icon icon-tag' if ContactsSetting.monochrome_tags?}" ) if tag_list
     end
 
     def contacts_for_select(project, options = {})
-      scope = Contact.where({})
+      scope = Contact.where(options[:where])
       scope = scope.limit(options[:limit] || 500)
       scope = scope.companies if options.delete(:is_company)
       scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
       scope = scope.by_project(project) if project
-      scope.to_a.sort!{|x, y| x.name <=> y.name }.collect {|m| [m.name, m.id.to_s]}
+      scope.to_a.sort!{|x, y| x.name <=> y.name }.collect {|m| [options[:short_label] ? m.name : m.name_with_company, m.id.to_s]}
     end
 
     def link_to_remote_list_update(text, url_params)
@@ -97,7 +98,6 @@ module RedmineContacts
       options_for_select(countries, :disabled => "", :selected => selected)
     end
 
-
     def countries_for_select
       l(:label_crm_countries).map{|k, v| [v, k.to_s]}.sort
     end
@@ -105,50 +105,49 @@ module RedmineContacts
     def select_contact_tag(name, contact, options={})
       cross_project_contacts = ContactsSetting.cross_project_contacts? || !!options.delete(:cross_project_contacts)
       field_id = sanitize_to_id(name)
-      is_select = !!options[:is_select]
-      display_field = !!options[:display_field]
       include_blank = !!options[:include_blank]
       is_company = !!options[:is_company]
       add_contact = !!options[:add_contact]
 
-      s = ""
-      if is_select
-        s << select_tag(name, options_for_select(contacts_for_select(cross_project_contacts ? nil : @project, :is_company => is_company), contact.try(:id)), :include_blank => include_blank)
-      else
-        s << autocomplete_contact_tag(name, contact, options.merge(:project_id => cross_project_contacts ? nil : @project))
-      end
+      s = ''
+      s << select_tag(name, options_for_select([[contact.try(:name_with_company), contact.try(:id)]], contact.try(:id)), :include_blank => true)
+      s << javascript_tag("$('##{field_id}').select2({
+          ajax: {
+            url: '#{auto_complete_contacts_path(:project_id => (cross_project_contacts ? nil : @project), :is_company => (options[:is_company] ? '1' : nil))}',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              return { q: params.term };
+            },
+            processResults: function (data, params) {
+              return { results: data };
+            },
+            cache: true
+          },
+          placeholder: ' ',
+          allowClear: #{include_blank},
+          minimumInputLength: 0,
+          width: '60%',
+          templateResult: formatState
+        }).on('select2:open', function (e) {
+          $('.select2-search__field').val(' ').trigger($.Event('input', { which: 13 })).val('');
+        });
+        function formatState (opt) {
+          var $opt = $('<span>' + opt.avatar + '&nbsp;' + opt.text + '</span>');
+          return $opt;
+        };")
 
       if add_contact
-        s << link_to(image_tag('add.png', :style => 'vertical-align: middle;'),
+        s << link_to(image_tag('add.png', :style => 'vertical-align: middle; margin-left: 5px;'),
                   new_project_contact_path(@project, :contact_field_name => name, :contacts_is_company => is_company),
                   :remote => true,
                   :method => 'get',
                   :title => l(:label_crm_contact_new),
                   :id => "#{field_id}_add_link",
-                  :style => (display_field || is_select) ? "" : "display: none;",
                   :tabindex => 200) if authorize_for('contacts', 'new')
+        s << javascript_include_tag('attachments')
       end
 
-      s.html_safe
-    end
-
-    def autocomplete_contact_tag(name, contact, options={})
-      field_id = sanitize_to_id(name)
-      display_field = !!options.delete(:display_field)
-      span_id = field_id + '_selected_contact'
-      link_id = field_id + '_edit_link'
-      s = ""
-      unless @heads_for_contacts_autocomplete_included
-        s << javascript_include_tag(:contacts_autocomplete, :plugin => 'redmine_contacts')
-        @heads_for_contacts_autocomplete_included = true
-      end
-      s << content_tag(:span, contact.to_s, :id => span_id)
-      s << link_to(image_tag("edit.png", :alt => l(:label_edit), :style => "vertical-align:middle;"), "#",
-              :onclick => "$('##{span_id}').hide(); $(this).hide(); $('##{field_id}_add_link').show(); $('##{field_id}').show(); $('##{field_id}').val(''); $('##{field_id}').focus(); return false;",
-              :id => link_id,
-              :style => display_field ? "display: none;" : "")
-      s << text_field_tag(name, contact.blank? ? '' : contact.id, :style => display_field ? "" : "display: none;", :placeholder => l(:label_crm_contact_search), :id =>  field_id, :class => "autocomplete")
-      s << javascript_tag("initContactsAutocomplete('#{name}', '#{escape_javascript auto_complete_contacts_path(:project_id => options[:project_id], :is_company => (options[:is_company] ? "1" : nil))}', '#{escape_javascript options[:select_url]}');");
       s.html_safe
     end
 

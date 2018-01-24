@@ -21,7 +21,7 @@
                     {:controller => :notes, :action => 'destroy', :id => note_item, :project_id => @project},
                     :remote => true,
                     :method => :delete,
-                    :confirm => l(:text_are_you_sure),
+                    :data => {:confirm => l(:text_are_you_sure)},
                     :class  => "delete", :title => l(:button_delete)) if note_item.destroyable_by?(User.current, @project) %>
           </div>
         <h4>

@@ -1,5 +1,6 @@
 <%= raw @contacts.map {|contact| {
       'id' => contact.id,
+      'text' => contact.name_with_company,
       'name' => contact.name,
       'avatar' => avatar_to(contact, :size => 16),
       'company' => contact.is_company ? "" : contact.company.to_s,

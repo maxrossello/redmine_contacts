@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -75,13 +75,13 @@ class ContactsIssuesController < ApplicationController
   end
 
   def close
+    @issue.init_journal(User.current)
     @issue.status = IssueStatus.where(:is_closed => true).first
     @issue.save
     respond_to do |format|
       format.js
       format.html {redirect_to :back }
     end
-
   end
 
   def autocomplete_for_contact

@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,19 +23,22 @@ class CreateContactsRelations < ActiveRecord::Migration
       t.integer :deal_id
       t.integer :contact_id
     end
-    add_index :contacts_deals, [:deal_id, :contact_id]
+    add_index :contacts_deals, :deal_id
+    add_index :contacts_deals, :contact_id
 
     create_table :contacts_issues, :id => false do |t|
       t.integer :issue_id,   :default => 0, :null => false
       t.integer :contact_id, :default => 0, :null => false
     end
-    add_index :contacts_issues, [:issue_id, :contact_id]
+    add_index :contacts_issues, :issue_id
+    add_index :contacts_issues, :contact_id
 
     create_table :contacts_projects, :id => false do |t|
       t.integer :project_id, :default => 0, :null => false
       t.integer :contact_id, :default => 0, :null => false
     end
-    add_index :contacts_projects, [:project_id, :contact_id]
+    add_index :contacts_projects, :project_id
+    add_index :contacts_projects, :contact_id
 
   end
 

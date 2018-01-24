@@ -60,7 +60,7 @@
   <h3><%= l(:label_crm_tags_plural) %></h3>
 
 	<div id="tags">
-    <span class="tag_list"><%= @tags.map{|tag| content_tag(:span, link_to(tag.name, {:controller => "contacts", :action => "contacts_notes", :project_id => @project, :tag => tag.name}), {:class => "tag-label-color"}.merge(RedmineContacts.settings[:monochrome_tags].to_i > 0 ? {} : {:style => "background-color: #{tag_color(tag.name)}"}))}.join(' ').html_safe %></span>
+    <span class="tag_list"><%= @tags.map{|tag| content_tag(:span, link_to(tag.name, {:controller => "contacts", :action => "contacts_notes", :project_id => @project, :tag => tag.name}), {}.merge(ContactsSetting.monochrome_tags? ? {:class => "tag-label"} : {:class => "tag-label-color", :style => "background-color: #{tag_color(tag.name)}"}))}.join(' ').html_safe %></span>
 	</div>
 
 	<%= render :partial => 'common/recently_viewed' %>

@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,35 +20,24 @@
 module RedmineContacts
   module Patches
 
-    module CrmQueryPatch
+    module IssuesHelperPatch
       def self.included(base) # :nodoc:
         base.send(:include, InstanceMethods)
         base.class_eval do
           unloadable
-
-          def self.visible(*args)
-            user = args.shift || User.current
-            base = Project.allowed_to_condition(user, "view_#{queried_class.name.pluralize.downcase}".to_sym, *args)
-            user_id = user.logged? ? user.id : 0
-
-            includes(:project).where("(#{table_name}.project_id IS NULL OR (#{base})) AND (#{table_name}.is_public = ? OR #{table_name}.user_id = ?)", true, user_id)
-          end
-
         end
       end
-    end
 
-
-    module InstanceMethods
-      def visible?(user=User.current)
-        (project.nil? || user.allowed_to?("view_#{queried_class.name.pluralize.downcase}".to_sym, project)) && (self.is_public? || self.user_id == user.id)
+      module InstanceMethods
+        def render_custom_fields_rows(issue)
+          render_half_width_custom_fields_rows(issue)
+        end
       end
-
     end
 
   end
 end
 
-unless CrmQuery.included_modules.include?(RedmineContacts::Patches::CrmQueryPatch)
-  CrmQuery.send(:include, RedmineContacts::Patches::CrmQueryPatch)
+unless IssuesHelper.included_modules.include?(RedmineContacts::Patches::IssuesHelperPatch)
+  IssuesHelper.send(:include, RedmineContacts::Patches::IssuesHelperPatch)
 end

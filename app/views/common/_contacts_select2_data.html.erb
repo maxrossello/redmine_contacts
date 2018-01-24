@@ -1,0 +1,7 @@
+<script type="text/javascript">
+  var field_formats = ['contact', 'company'];
+  var contact_filter_urls =  {
+    'company': "<%= auto_complete_contacts_path(:project_id => (ContactsSetting.cross_project_contacts? ? nil : @project), :is_company => true) %>",
+    'contact': "<%= auto_complete_contacts_path(:project_id => (ContactsSetting.cross_project_contacts? ? nil : @project)) %>",
+  }
+</script>

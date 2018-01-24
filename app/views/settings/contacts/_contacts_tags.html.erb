@@ -26,7 +26,7 @@
 
           <%= link_to l(:button_delete), contacts_tags_path(:ids => tag),
                                          :method => :delete,
-                                         :confirm => l(:text_are_you_sure),
+                                         :data => {:confirm => l(:text_are_you_sure)},
                                          :class => 'icon icon-del' %>
           </td>
 
@@ -35,7 +35,6 @@
     <% end %>
   </tbody>
 </table>
-<%= context_menu context_menu_contacts_tags_path %>
 <% else %>
 <p class="nodata"><%= l(:label_no_data) %></p>
 <% end %>

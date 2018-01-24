@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ class ContactsController < ApplicationController
     @contact.save_attachments(params[:attachments] || (params[:contact] && params[:contact][:uploads]))
     if @contact.save
       flash[:notice] = l(:notice_successful_update)
-      attach_avatar
+      remove_old_avatars
       respond_to do |format|
         format.html { redirect_to :action => "show", :project_id => params[:project_id], :id => @contact }
         format.api  { render_api_ok }
@@ -161,7 +161,7 @@ class ContactsController < ApplicationController
     @contact.save_attachments(params[:attachments] || (params[:contact] && params[:contact][:uploads]))
     if @contact.save
       flash[:notice] = l(:notice_successful_create)
-      attach_avatar
+      remove_old_avatars
       respond_to do |format|
         format.html { redirect_to (params[:continue] ?  {:action => "new", :project_id => @project} : {:action => "show", :project_id => @project, :id => @contact} )}
         format.js
@@ -237,13 +237,11 @@ private
     @contact_issues = scope.visible.order("#{Issue.table_name}.status_id, #{Issue.table_name}.updated_on DESC").limit(10)
   end
 
-  def attach_avatar
-    if params[:contact_avatar]
-      params[:contact_avatar][:description] = 'avatar'
-      @contact.avatar.destroy if @contact.avatar
-      Attachment.attach_files(@contact, {"1" => params[:contact_avatar]})
-      render_attachment_warning_if_needed(@contact)
-    end
+  def remove_old_avatars
+    avatar_params = params[:attachments].find { |_k, v| v['description'] == 'avatar' }.try(:last) if params[:attachments].present?
+    return unless avatar_params
+    avatar_id = avatar_params['token'].split('.').first.to_i
+    @contact.attachments.where(:description => 'avatar').where('id != ?', avatar_id).destroy_all if @contact.avatar
   end
 
   def last_notes(count=5)
@@ -323,8 +321,8 @@ private
     render_404
   end
 
-  def find_project
-    project_id = (params[:contact] && params[:contact][:project_id]) || params[:project_id]
+  def find_project(project_id = nil)
+    project_id ||= (params[:contact] && params[:contact][:project_id]) || params[:project_id]
     @project = Project.find(project_id)
   rescue ActiveRecord::RecordNotFound
     render_404

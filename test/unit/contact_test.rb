@@ -3,8 +3,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -155,4 +155,17 @@ class ContactTest < ActiveSupport::TestCase
     assert_equal contacts.collect(&:id).sort, Contact.all.select {|contact| contact.visible?(user)}.collect(&:id).sort
   end
 
+  def test_emails_format_for_contact
+    project = Project.find(1)
+    assert_equal true, Contact.new(:project => project, :first_name => 'Test', :email => 'test+2-1@test.com').valid?
+    assert_equal true, Contact.new(:project => project, :first_name => 'Test', :email => ' test+2-1@test.com ').valid?
+    assert_equal true, Contact.new(:project => project, :first_name => 'Test', :email => 'test+2-1@test.com,').valid?
+    assert_equal true, Contact.new(:project => project, :first_name => 'Test', :email => 'test+2-1@test.com,foo@bar.com,tt@tt.ru').valid?
+    assert_equal true, Contact.new(:project => project, :first_name => 'Test', :email => 'test+2-1@test.com, foo@bar.com').valid?
+  end
+
+  def test_email_transformation_on_create
+    assert_equal 'test@test.com', Contact.create!(:project => Project.find(1), :first_name => 'Test', :email => ' test@test.com    ').email
+    assert_equal 'test@test.com,foo@bar.com', Contact.create!(:project => Project.find(1), :first_name => 'Test', :email => ' test@test.com  , foo@bar.com  ').email
+  end
 end

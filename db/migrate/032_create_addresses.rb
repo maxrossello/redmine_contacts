@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,12 +28,11 @@ class CreateAddresses < ActiveRecord::Migration
       t.string :country_code, :limit => 2
       t.text :full_address
       t.string :address_type, :limit => 16
-
       t.references :addressable, :polymorphic => true
-
       t.timestamps :null => false
     end
     add_index :addresses, [ :addressable_id, :addressable_type ]
+    add_index :addresses, :address_type
 
     Contact.all.each do |asset|
       Address.create(:street1 => asset.attributes["address"].gsub(/\n/, ' ').first(250), :full_address => asset.attributes["address"], :address_type => "business", :addressable => asset) unless asset.attributes["address"].blank?
@@ -48,4 +47,3 @@ class CreateAddresses < ActiveRecord::Migration
   end
 
 end
-

@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-requires_redmine_crm :version_or_higher => '0.0.23' rescue raise "\n\033[31mRedmine requires newer redmine_crm gem version.\nPlease update with 'bundle update redmine_crm'.\033[0m"
+requires_redmine_crm :version_or_higher => '0.0.31' rescue raise "\n\033[31mRedmine requires newer redmine_crm gem version.\nPlease update with 'bundle update redmine_crm'.\033[0m"
 
 require 'redmine'
 
-CONTACTS_VERSION_NUMBER = '4.0.5'
+CONTACTS_VERSION_NUMBER = '4.1.1'
 CONTACTS_VERSION_TYPE = "Light version"
 
 if ActiveRecord::VERSION::MAJOR >= 4
@@ -31,11 +31,11 @@ end
 
 Redmine::Plugin.register :redmine_contacts do
   name "Redmine CRM plugin (#{CONTACTS_VERSION_TYPE})"
-  author 'RedmineCRM'
+  author 'RedmineUP'
   description 'This is a CRM plugin for Redmine that can be used to track contacts and deals information'
   version CONTACTS_VERSION_NUMBER
-  url 'http://redminecrm.com'
-  author_url 'mailto:support@redminecrm.com'
+  url 'https://www.redmineup.com/pages/plugins/crm'
+  author_url 'mailto:support@redmineup.com'
 
   requires_redmine :version_or_higher => '2.3'
 
@@ -102,7 +102,7 @@ Redmine::Plugin.register :redmine_contacts do
                           :if => Proc.new{ User.current.allowed_to?({:controller => 'contacts', :action => 'index'},
                                           nil, {:global => true})  && ContactsSetting.contacts_show_in_app_menu? }
 
-  menu :admin_menu, :contacts, {:controller => 'settings', :action => 'plugin', :id => "redmine_contacts"}, :caption => :contacts_title
+  menu :admin_menu, :contacts, {:controller => 'settings', :action => 'plugin', :id => "redmine_contacts"}, :caption => :contacts_title, :html => {:class => 'icon'}
 
   activity_provider :contacts, :default => false, :class_name => ['ContactNote', 'Contact']
 
@@ -112,6 +112,4 @@ Redmine::Plugin.register :redmine_contacts do
 
 end
 
-ActionDispatch::Callbacks.to_prepare do
-  require 'redmine_contacts'
-end
+require 'redmine_contacts'

@@ -85,4 +85,8 @@
 
 <% end %>
 
-<%= context_menu url_for( {:controller => "contacts", :action => "context_menu"} )%>
+<% if Redmine::VERSION.to_s >= '3.4' || RedmineContacts.unstable_branch? %>
+  <%= context_menu %>
+<% else %>
+  <%= context_menu url_for( {:controller => "contacts", :action => "context_menu"} ) %>
+<% end %>

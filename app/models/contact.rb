@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ class Contact < ActiveRecord::Base
 
   acts_as_event :datetime => :created_on,
                 :url => lambda {|o| {:controller => 'contacts', :action => 'show', :id => o}},
-                :type => 'icon-contact',
+                :type => 'icon icon-contact',
                 :title => lambda {|o| o.name },
                 :description => lambda {|o| [o.info, o.company, o.email, o.address, o.background].join(' ') }
 
@@ -176,12 +176,13 @@ class Contact < ActiveRecord::Base
                                                LOWER(#{Contact.table_name}.job_title) LIKE LOWER(:p))",
                                              {:p => "%" + search.downcase + "%"})}
 
-
-
   validates_presence_of :first_name, :project
+  validate :emails_format
   # validates_uniqueness_of :first_name, :scope => [:last_name, :company, :email]
 
+  before_validation :strip_email
   after_create :send_notification
+  before_save :update_company_contacts
 
   safe_attributes 'is_company',
     'first_name',
@@ -264,6 +265,7 @@ class Contact < ActiveRecord::Base
     scope = scope.where("LOWER(first_name) LIKE LOWER(?)", "%#{ self.first_name.strip }%") if !self.first_name.blank?
     scope = scope.where("LOWER(middle_name) LIKE LOWER(?)", "%#{ self.middle_name.strip }%") if !self.middle_name.blank?
     scope = scope.where("LOWER(last_name) LIKE LOWER(?)", "%#{ self.last_name.strip }%") if !self.last_name.blank?
+    scope = scope.where("LOWER(email) LIKE LOWER(?)", "%#{ self.primary_email.strip }%") if !self.primary_email.blank?
     scope = scope.where("#{Contact.table_name}.id <> ?", self.id) if !self.new_record?
     @duplicates ||= (self.first_name.blank? && self.last_name.blank? && self.middle_name.blank?) ? [] : scope.visible.limit(limit)
   end
@@ -339,13 +341,14 @@ class Contact < ActiveRecord::Base
 
   def project(current_project=nil)
     return @project if @project
-    if current_project && self.projects.visible.include?(current_project)
+    visible_projects = Project.visible.where(:id => projects.pluck(:id))
+    if current_project && visible_projects.include?(current_project)
       @project  = current_project
     else
-      @project  = self.projects.visible.where(Project.allowed_to_condition(User.current, :view_contacts)).first
+      @project  = visible_projects.where(Project.allowed_to_condition(User.current, :view_contacts)).first
     end
 
-    @project ||= self.projects.first
+    @project ||= projects.first
   end
 
   def project=(project)
@@ -390,6 +393,11 @@ class Contact < ActiveRecord::Base
     else
       self.first_name
     end
+  end
+
+  def name_with_company
+    return name if company.blank?
+    [name, ' ', '(', company, ')'].join
   end
 
   def info
@@ -472,4 +480,21 @@ class Contact < ActiveRecord::Base
     Mailer.crm_contact_add(self).deliver if Setting.notified_events.include?('crm_contact_added')
   end
 
+  def strip_email
+    return unless email
+    self.email = email.tr(' ', '')
+  end
+
+  def emails_format
+    return unless email
+    validate_result = email.split(',').all? { |email| email.match(/\A([\w\.\+\-\!\#\$\%\&\/]+)@([\w\-]+\.)+([\w]{2,})\z/i).present? }
+    errors.add(:email, I18n.t(:text_crm_string_incorrect_format)) unless validate_result
+  end
+
+  def update_company_contacts
+    return unless is_company
+    return unless first_name_changed?
+    Contact.where(["#{Contact.table_name}.is_company = ?  AND #{Contact.table_name}.company = ?", false, first_name_was]).
+            update_all(:company => first_name)
+  end
 end

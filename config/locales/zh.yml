@@ -48,14 +48,14 @@ zh:
   label_crm_note_read_more: (阅读更多)
   label_crm_invoice_import: 从CSV中导入发票
 
-  label_deal_plural: 合同
+  label_deal_plural: 合作
   label_crm_contractor_plural: 接触人
-  label_deal: 合同
-  label_crm_deal_new: 新合同
-  label_crm_deal_edit_information: 编辑合同信息
+  label_deal: 合作
+  label_crm_deal_new: 新合作
+  label_crm_deal_edit_information: 编辑合作信息
   label_crm_deal_change_status: 更改状态
   label_crm_statistics: 统计
-  label_crm_deals_import: 从CSV中导入合同
+  label_crm_deals_import: 从CSV中导入合作
 
   label_crm_deal_status_new: 新建
   label_crm_deal_status_first_contact: 第一联系人
@@ -71,7 +71,7 @@ zh:
   field_currency: 货币
   field_contact: 联系人
 
-  field_deal_name: 姓名
+  field_deal_name: 名称
   field_deal_background: 背景
   field_deal_contact: 联系人
   field_deal_price: 总计
@@ -79,22 +79,22 @@ zh:
 
   field_contact_avatar: 头像
   field_contact_is_company: 公司
-  field_contact_name: 姓名
+  field_contact_name: 名称
   field_contact_last_name: 姓
   field_contact_first_name: 名
   field_contact_middle_name: 中间名
-  field_contact_job_title: 职位名称
+  field_contact_job_title: 职位
   field_contact_company: 公司
   field_contact_address: 地址
   field_contact_phone: 电话
   field_contact_email: 邮件
   field_contact_website: 网站
-  field_contact_skype: skype
+  field_contact_skype: 微信
   field_contact_status: 状态
   field_contact_background: 背景
   field_contact_tag_names: 标签
-  field_first_name: 名
-  field_last_name: 姓
+  field_first_name: 名字
+  field_last_name: 姓氏
   field_company: 公司
   field_birthday: 生日
   field_contact_department: 部门
@@ -117,23 +117,23 @@ zh:
   permission_view_contacts: 浏览联系人
   permission_edit_contacts: 编辑联系人
   permission_delete_contacts: 删除联系人
-  permission_view_deals: 浏览合同
-  permission_edit_deals: 编辑合同
-  permission_delete_deals: 删除合同
+  permission_view_deals: 浏览合作
+  permission_edit_deals: 编辑合作
+  permission_delete_deals: 删除合作
   permission_add_notes: 增加注释
   permission_delete_notes: 删除注释
   permission_delete_own_notes: 删除自己的注释
 
   # 2.0.0
-  label_crm_deal_category: 合同分类
-  label_crm_deal_category_plural: 合同分类
+  label_crm_deal_category: 合作分类
+  label_crm_deal_category_plural: 合作分类
   label_crm_deal_category_new: 新建类别
   text_deal_category_destroy_assignments: 删除分类任务
-  text_deal_category_destroy_question: "一些合同 (%{count}) 被分配至该类别下.您想要做什么?"
-  text_deal_category_reassign_to: 重新分配合同至该类别
-  text_deals_destroy_confirmation: '您确定想要删除选择的合同吗(s)?'
-  label_crm_deal_status_plural: 合同状态
-  label_crm_deal_status: 合同状态
+  text_deal_category_destroy_question: "一些合作 (%{count}) 被分配至该类别下. 您想要做什么?"
+  text_deal_category_reassign_to: 重新分配合作至该类别
+  text_deals_destroy_confirmation: '您确定想要删除选择的合作吗(s)?'
+  label_crm_deal_status_plural: 合作状态
+  label_crm_deal_status: 合作状态
   field_deal_status_is_closed: 关闭
   label_crm_deal_status_new: 新建
   permission_manage_contacts: 管理联系人
@@ -142,22 +142,22 @@ zh:
   label_crm_count: 数量
 
   #2.0.1
-  label_crm_user_format: 联系人姓名格式
+  label_crm_user_format: 联系人名称格式
   label_crm_my_contact_plural: 分配联系人至我
-  label_crm_my_deal_plural: 开启合同至我
+  label_crm_my_deal_plural: 开启合作至我
   label_crm_contact_view_all: 浏览所有联系人
-  label_crm_deal_view_all: 浏览所有合同
+  label_crm_deal_view_all: 浏览所有合作
 
   #2.0.2
   label_crm_bulk_edit_selected_contacts: 编辑所有选择的联系人
-  label_crm_bulk_edit_selected_deals: 编辑素有选择的合同
+  label_crm_bulk_edit_selected_deals: 编辑素有选择的合作
   label_crm_bulk_send_mail_selected_contacts: 发送邮件给所选联系人
   field_add_tags: 新建标签
   field_delete_tags: 删除标签
   label_crm_send_mail: 发送邮件
   error_empty_email: 邮件内容不可为空
   permission_send_contacts_mail: 发送邮件
-  field_mail_from: 从地址
+  field_mail_from: 邮件来自
   text_email_macros: 可用宏 %{macro}
   field_message: 消息
 
@@ -174,7 +174,7 @@ zh:
   label_crm_recently_added_contacts: 最近创建联系人
   label_crm_created_by_me: 由我创建的联系人
   my_contacts: 我的联系人
-  my_deals: 我的合同
+  my_deals: 我的合作
 
   #2.2.0
   label_crm_note_type_email: 邮件
@@ -183,12 +183,12 @@ zh:
   field_deal_currency: 货币
   label_crm_my_contacts_stats: 联系人当月统计
   label_crm_contacts_created: 创建的联系人
-  label_crm_deals_created: 创建的合同
+  label_crm_deals_created: 创建的合作
   my_contacts_avatars: 我联系人的照片
   my_contacts_stats: 联系人统计
   label_crm_add_into: 创建至
   label_crm_delete_from: 删除
-  label_crm_show_deaks_tab: 显示合同标签
+  label_crm_show_deaks_tab: 显示合作标签
   label_crm_show_on_projects_show: 显示项目概述中的联系人
 
   #2.2.1
@@ -218,11 +218,11 @@ zh:
   field_tags: 标签
   field_last_note: 最新注释
   field_is_company: 公司
-  field_contact_full_name: 姓名
+  field_contact_full_name: 名称
   button_contacts_edit_query: 编辑查询
   button_contacts_delete_query: 删除查询
   permission_manage_public_contacts_queries: 管理公共查询
-  permission_add_deals: 新建合同
+  permission_add_deals: 新建合作
   permission_add_contacts: 新建联系人
   permission_save_contacts_queries: 保存查询
 
@@ -235,24 +235,24 @@ zh:
   #3.0.0
   label_crm_import: 导入
   label_contact_note_plural: 联系人注释
-  label_deal_note_plural: 合同注释
+  label_deal_note_plural: 合作注释
   label_crm_contact_all_note_plural: 所有注释
-  error_unable_delete_deal_status: 不能删除合同状态
+  error_unable_delete_deal_status: 不能删除合作状态
   label_crm_contacts_hidden: 隐藏的设置
 
   #3.1.0
   label_crm_contact_added: 新增的联系人
   label_crm_note_added: 新增的注释
-  label_crm_deal_added: 新增的合同
-  label_crm_deal_updated: 更新的合同
+  label_crm_deal_added: 新增的合作
+  label_crm_deal_updated: 更新的合作
   text_crm_contact_added: "联系人 %{name} 已经由 %{author}创建."
-  text_crm_deal_added: "合同 %{name} 已经由 %{author}创建."
-  text_crm_deal_status_changed: "合同状态由 %{old} 更改至 %{new}"
-  text_crm_deal_updated: "合同 %{name} 已经由 %{author}更新."
+  text_crm_deal_added: "合作 %{name} 已经由 %{author}创建."
+  text_crm_deal_status_changed: "合作状态由 %{old} 更改至 %{new}"
+  text_crm_deal_updated: "合作 %{name} 已经由 %{author}更新."
   label_crm_contacts_cc: 抄送
   label_crm_contacts_bcc: 密送
   label_crm_contact_import: 从CSV导入
-  permission_import_deals: 导入合同
+  permission_import_deals: 导入合作
   label_crm_single_quotes: "单引号 (')"
   label_crm_double_quotes: "双引号 (\")"
   label_crm_quotes_type: 引号类型
@@ -264,26 +264,26 @@ zh:
   text_crm_error_on_line: '错误在行 %{line}: %{error}.'
 
   #3.2.0
-  label_crm_probability: 可能性
+  label_crm_probability: 合作可能性
   label_crm_deal_status_type: 状态类别
-  label_crm_select_companies: 在合同中过滤公司
+  label_crm_select_companies: 在合作中过滤公司
   label_crm_expected_revenue: 期望收益
   label_crm_deal_due_date: 到期日
 
   #3.2.2
-  label_crm_show_deals_in_top_menu: 在顶部菜单中显示合同
+  label_crm_show_deals_in_top_menu: 在顶部菜单中显示合作
   label_crm_show_details: 显示细节
-  label_crm_has_deals: 合同
-  label_crm_has_open_issues: 未决问题
+  label_crm_has_deals: 合作
+  label_crm_has_open_issues: 打开问题
   label_crm_note: 注释
 
   #3.2.5
   notice_failed_to_save_contacts: "不能保存 %{count} 联系人(s)  %{total} 已选: %{ids}."
 
   #3.2.6
-  project_module_deals: 合同
-  permission_manage_deals: 管理合同
-  label_crm_deals_from_subprojects: 在子项目中显示合同
+  project_module_deals: 合作
+  permission_manage_deals: 管理合作
+  label_crm_deals_from_subprojects: 在子项目中显示合作
   label_crm_megre_tags: 合并标签
   label_crm_monochrome_tags: 单色标签
 
@@ -291,276 +291,277 @@ zh:
   label_crm_address: 地址
   label_crm_street1: 街道 1
   label_crm_street2: 街道 2
-  label_crm_city: 城市
+  label_crm_city: 市
   label_crm_region: '省'
   label_crm_postcode: '邮编'
   label_crm_country: 国家
+  label_crm_country_code: 国家代码
   label_crm_countries:
-    AF: Afghanistan
-    AL: Albania
-    DZ: Algeria
-    AS: American Samoa
-    AD: Andorra
-    AO: Angola
-    AI: Anguilla
-    AQ: Antarctica
-    AG: Antigua and Barbuda
-    AR: Argentina
-    AM: Armenia
-    AW: Aruba
+    AF: 阿富汗
+    AL: 阿尔巴尼亚
+    DZ: 阿尔及利亚
+    AS: 美属萨摩亚
+    AD: 安道尔
+    AO: 安哥拉
+    AI: 安圭拉
+    AQ: 南极洲
+    AG: 安提瓜和巴布达
+    AR: 阿根廷
+    AM: 亚美尼亚
+    AW: 阿鲁巴
     AU: 澳大利亚
-    AT: Austria
-    AZ: Azerbaijan
-    BS: Bahamas
-    BH: Bahrain
-    BD: Bangladesh
-    BB: Barbados
-    BY: Belarus
-    BE: Belgium
-    BZ: Belize
-    BJ: Benin
-    BM: Bermuda
-    BT: Bhutan
-    BO: Bolivia
-    BA: Bosnia and Herzegovina
-    BW: Botswana
-    BV: Bouvet Island
+    AT: 奥地利
+    AZ: 阿塞拜疆
+    BS: 巴哈马
+    BH: 巴林
+    BD: 孟加拉国
+    BB: 巴巴多斯
+    BY: 白俄罗斯
+    BE: 比利时
+    BZ: 伯利兹
+    BJ: 贝宁
+    BM: 百慕大
+    BT: 不丹
+    BO: 玻利维亚
+    BA: 波斯尼亚和黑塞哥维那
+    BW: 博茨瓦纳
+    BV: 布韦岛
     BR: 巴西
-    BQ: British Antarctic Territory
-    IO: British Indian Ocean Territory
-    VG: British Virgin Islands
-    BN: Brunei
-    BG: Bulgaria
-    BF: Burkina Faso
-    BI: Burundi
-    KH: Cambodia
-    CM: Cameroon
+    BQ: 英属南极领地
+    IO: 英属印度洋领地
+    VG: 英属维尔京群岛
+    BN: 文莱
+    BG: 保加利亚
+    BF: 布基纳法索
+    BI: 布隆迪
+    KH: 柬埔寨
+    CM: 喀麦隆
     CA: 加拿大
-    CT: Canton and Enderbury Islands
-    CV: Cape Verde
-    KY: Cayman Islands
-    CF: Central African Republic
-    TD: Chad
-    CL: Chile
+    CT: 坎顿和恩德伯里群岛
+    CV: 佛得角
+    KY: 开曼群岛
+    CF: 中非共和国
+    TD: 乍得
+    CL: 智利
     CN: 中国
-    CX: Christmas Island
-    CC: Cocos [Keeling] Islands
-    CO: Colombia
-    KM: Comoros
-    CG: Congo - Brazzaville
-    CD: Congo - Kinshasa
-    CK: Cook Islands
-    CR: Costa Rica
-    HR: Croatia
+    CX: 圣诞岛
+    CC: 科科斯群岛
+    CO: 哥伦比亚
+    KM: 科摩罗
+    CG: 刚果 - 布拉柴维尔
+    CD: 刚果 - 金沙萨
+    CK: 库克群岛
+    CR: 哥斯达黎加
+    HR: 克罗地亚
     CU: 古巴
-    CY: Cyprus
-    CZ: Czech Republic
-    CI: Côte d’Ivoire
-    DK: Denmark
-    DJ: Djibouti
-    DM: Dominica
-    DO: Dominican Republic
-    NQ: Dronning Maud Land
-    DD: East Germany
-    EC: Ecuador
+    CY: 塞浦路斯
+    CZ: 捷克共和国
+    CI: 科特迪瓦
+    DK: 丹麦
+    DJ: 吉布提
+    DM: 多米尼加
+    DO: 多米尼加共和国
+    NQ: 德龙莫德地区
+    DD: 东德
+    EC: 厄瓜多尔
     EG: 埃及
-    SV: El Salvador
-    GQ: Equatorial Guinea
-    ER: Eritrea
-    EE: Estonia
-    ET: Ethiopia
-    FK: Falkland Islands
-    FO: Faroe Islands
-    FJ: Fiji
-    FI: Finland
+    SV: 萨尔瓦多
+    GQ: 赤道几内亚
+    ER: 厄立特里亚
+    EE: 爱沙尼亚
+    ET: 埃塞俄比亚
+    FK: 福克兰群岛
+    FO: 法罗群岛
+    FJ: 斐济
+    FI: 芬兰
     FR: 法国
-    GF: French Guiana
-    PF: French Polynesia
-    TF: French Southern Territories
-    FQ: French Southern and Antarctic Territories
-    GA: Gabon
-    GM: Gambia
-    GE: Georgia
-    DE: Germany
-    GH: Ghana
-    GI: Gibraltar
+    GF: 法属圭亚那
+    PF: 法属波利尼西亚
+    TF: 法属南部领地
+    FQ: 法国南部和南极领地
+    GA: 加蓬
+    GM: 冈比亚
+    GE: 格鲁吉亚
+    DE: 德国
+    GH: 加纳
+    GI: 直布罗陀
     GR: 希腊
-    GL: Greenland
-    GD: Grenada
-    GP: Guadeloupe
-    GU: Guam
-    GT: Guatemala
-    GG: Guernsey
-    GN: Guinea
-    GW: Guinea-Bissau
-    GY: Guyana
-    HT: Haiti
-    HM: Heard Island and McDonald Islands
-    HN: Honduras
+    GL: 格陵兰
+    GD: 格林纳达
+    GP: 瓜德罗普
+    GU: 关岛
+    GT: 危地马拉
+    GG: 根西岛
+    GN: 几内亚
+    GW: 几内亚比绍
+    GY: 圭亚那
+    HT: 海地
+    HM: 赫德岛和麦克唐纳群岛
+    HN: 洪都拉斯
     HK: 中国香港特别行政区
-    HU: Hungary
+    HU: 匈牙利
     IS: 冰岛
     IN: 印度
-    ID: Indonesia
-    IR: Iran
-    IQ: Iraq
-    IE: Ireland
-    IM: Isle of Man
-    IL: Israel
+    ID: 印度尼西亚
+    IR: 伊朗
+    IQ: 伊拉克
+    IE: 爱尔兰
+    IM: 马恩岛
+    IL: 以色列
     IT: 意大利
-    JM: Jamaica
+    JM: 牙买加
     JP: 日本
-    JE: Jersey
-    JT: Johnston Island
-    JO: Jordan
-    KZ: Kazakhstan
-    KE: Kenya
-    KI: Kiribati
-    KW: Kuwait
-    KG: Kyrgyzstan
-    LA: Laos
-    LV: Latvia
-    LB: Lebanon
-    LS: Lesotho
-    LR: Liberia
-    LY: Libya
-    LI: Liechtenstein
-    LT: Lithuania
-    LU: Luxembourg
-    MO: Macau SAR China
-    MK: Macedonia
-    MG: Madagascar
-    MW: Malawi
-    MY: Malaysia
-    MV: Maldives
-    ML: Mali
-    MT: Malta
-    MH: Marshall Islands
-    MQ: Martinique
-    MR: Mauritania
-    MU: Mauritius
-    YT: Mayotte
-    FX: Metropolitan France
+    JE: 泽西
+    JT: 约翰斯顿岛
+    JO: 约旦
+    KZ: 哈萨克斯坦
+    KE: 肯尼亚
+    KI: 基里巴斯
+    KW: 科威特
+    KG: 吉尔吉斯斯坦
+    LA: 老挝
+    LV: 拉脱维亚
+    LB: 黎巴嫩
+    LS: 莱索托
+    LR: 利比里亚
+    LY: 利比亚
+    LI: 列支敦士登
+    LT: 立陶宛
+    LU: 卢森堡
+    MO: 中国澳门
+    MK: 马其顿
+    MG: 马达加斯加
+    MW: 马拉维
+    MY: 马来西亚
+    MV: 马尔代夫
+    ML: 马里
+    MT: 马耳他
+    MH: 马绍尔群岛
+    MQ: 马提尼克
+    MR: 毛里塔尼亚
+    MU: 毛里求斯
+    YT: 马约特
+    FX: 法国
     MX: 墨西哥
-    FM: Micronesia
-    MI: Midway Islands
-    MD: Moldova
-    MC: Monaco
-    MN: Mongolia
-    ME: Montenegro
-    MS: Montserrat
-    MA: Morocco
-    MZ: Mozambique
-    MM: Myanmar [Burma]
-    NA: Namibia
-    NR: Nauru
-    NP: Nepal
-    NL: Netherlands
-    AN: Netherlands Antilles
-    NT: Neutral Zone
-    NC: New Caledonia
-    NZ: New Zealand
-    NI: Nicaragua
-    NE: Niger
-    NG: Nigeria
-    NU: Niue
-    NF: Norfolk Island
-    KP: North Korea
-    VD: North Vietnam
-    MP: Northern Mariana Islands
-    "NO": Norway
-    OM: Oman
-    PC: Pacific Islands Trust Territory
-    PK: Pakistan
-    PW: Palau
-    PS: Palestinian Territories
-    PA: Panama
-    PZ: Panama Canal Zone
-    PG: Papua New Guinea
-    PY: Paraguay
-    YD: People's Democratic Republic of Yemen
-    PE: Peru
-    PH: Philippines
-    PN: Pitcairn Islands
+    FM: 密克罗尼西亚
+    MI: 中途岛
+    MD: 摩尔多瓦
+    MC: 摩纳哥
+    MN: 蒙古
+    ME: 黑山
+    MS: 蒙特塞拉特
+    MA: 摩洛哥
+    MZ: 莫桑比克
+    MM: 缅甸
+    NA: 纳米比亚
+    NR: 瑙鲁
+    NP: 尼泊尔
+    NL: 荷兰
+    AN: 荷属安的列斯
+    NT: 中性区
+    NC: 新喀里多尼亚
+    NZ: 新西兰
+    NI: 尼加拉瓜
+    NE: 尼日尔
+    NG: 尼日利亚
+    NU: 纽埃
+    NF: 诺福克岛
+    KP: 朝鲜
+    VD: 北越
+    MP: 北马里亚纳群岛
+    "NO": 挪威
+    OM: 阿曼
+    PC: 太平洋岛屿托管领土
+    PK: 巴基斯坦
+    PW: 帕劳
+    PS: 巴勒斯坦领土
+    PA: 巴拿马
+    PZ: 巴拿马运河区
+    PG: 巴布亚新几内亚
+    PY: 巴拉圭
+    YD: 也门人民民主共和国
+    PE: 秘鲁
+    PH: 菲律宾
+    PN: 皮特凯恩群岛
     PL: 波兰
-    PT: Portugal
-    PR: Puerto Rico
-    QA: Qatar
-    RO: Romania
+    PT: 葡萄牙
+    PR: 波多黎各
+    QA: 卡塔尔
+    RO: 罗马尼亚
     RU: 俄罗斯
-    RW: Rwanda
-    RE: Réunion
-    BL: Saint Barthélemy
-    SH: Saint Helena
-    KN: Saint Kitts and Nevis
-    LC: Saint Lucia
-    MF: Saint Martin
-    PM: Saint Pierre and Miquelon
-    VC: Saint Vincent and the Grenadines
-    WS: Samoa
-    SM: San Marino
-    SA: Saudi Arabia
-    SN: Senegal
-    RS: Serbia
-    CS: Serbia and Montenegro
-    SC: Seychelles
-    SL: Sierra Leone
+    RW: 卢旺达
+    RE: 法属留尼旺
+    BL: 圣巴泰勒米
+    SH: 圣赫勒拿
+    KN: 圣基茨和尼维斯
+    LC: 圣卢西亚
+    MF: 圣马丁
+    PM: 圣皮埃尔和密克隆
+    VC: 圣文森特和格林纳丁斯
+    WS: 萨摩亚
+    SM: 圣马力诺
+    SA: 沙特阿拉伯
+    SN: 塞内加尔
+    RS: 塞尔维亚
+    CS: 塞尔维亚和黑山
+    SC: 塞舌尔
+    SL: 塞拉利昂
     SG: 新加坡
-    SK: Slovakia
-    SI: Slovenia
-    SB: Solomon Islands
-    SO: Somalia
+    SK: 斯洛伐克
+    SI: 斯洛文尼亚
+    SB: 所罗门群岛
+    SO: 索马里
     ZA: 南非
-    GS: South Georgia and the South Sandwich Islands
-    KR: 南韩
+    GS: 南乔治亚和南桑威奇群岛
+    KR: 韩国
     ES: 西班牙
-    LK: Sri Lanka
-    SD: Sudan
-    SR: Suriname
-    SJ: Svalbard and Jan Mayen
-    SZ: Swaziland
+    LK: 斯里兰卡
+    SD: 苏丹
+    SR: 苏里南
+    SJ: 斯瓦尔巴德和扬马延
+    SZ: 斯威士兰
     SE: 瑞典
-    CH: Switzerland
-    SY: Syria
-    ST: São Tomé and Príncipe
+    CH: 瑞士
+    SY: 叙利亚
+    ST: 圣多美和普林西比
     TW: 台湾
-    TJ: Tajikistan
-    TZ: Tanzania
+    TJ: 塔吉克斯坦
+    TZ: 坦桑尼亚
     TH: 泰国
-    TL: Timor-Leste
-    TG: Togo
-    TK: Tokelau
-    TO: Tonga
-    TT: Trinidad and Tobago
-    TN: Tunisia
-    TR: Turkey
-    TM: Turkmenistan
-    TC: Turks and Caicos Islands
-    TV: Tuvalu
-    UM: U.S. Minor Outlying Islands
-    PU: U.S. Miscellaneous Pacific Islands
-    VI: U.S. Virgin Islands
-    UG: Uganda
-    UA: Ukraine
-    AE: United Arab Emirates
+    TL: 东帝汶
+    TG: 多哥
+    TK: 托克劳
+    TO: 汤加
+    TT: 特立尼达和多巴哥
+    TN: 突尼斯
+    TR: 土耳其
+    TM: 土库曼斯坦
+    TC: 特克斯和凯科斯群岛
+    TV: 图瓦卢
+    UM: 美国小型离岛
+    PU: 美国其他太平洋群岛
+    VI: 美属维尔京群岛
+    UG: 乌干达
+    UA: 乌克兰
+    AE: 阿拉伯联合酋长国
     GB: 英国
     US: 美国
-    ZZ: Unknown or Invalid Region
-    UY: Uruguay
-    UZ: Uzbekistan
-    VU: Vanuatu
-    VA: Vatican City
-    VE: Venezuela
+    ZZ: 未知或无效区域
+    UY: 乌拉圭
+    UZ: 乌兹别克斯坦
+    VU: 瓦努阿图
+    VA: 梵蒂冈城
+    VE: 委内瑞拉
     VN: 越南
-    WK: Wake Island
-    WF: Wallis and Futuna
-    EH: Western Sahara
-    YE: Yemen
-    ZM: Zambia
-    ZW: Zimbabwe
-    AX: Åland Islands
+    WK: 唤醒岛
+    WF: 瓦利斯和富图纳
+    EH: 西撒哈拉
+    YE: 也门
+    ZM: 赞比亚
+    ZW: 津巴布韦
+    AX: 奥兰群岛
   label_crm_cross_project_contacts: 允许跨项目联系人关系
-  label_crm_list_board: Board
+  label_crm_list_board: 板
   label_crm_default_list_style: 默认联系风格
   label_crm_show_in_top_menu: 在顶部菜单中显示
   label_crm_show_in_app_menu: 在应用菜单中显示
@@ -587,23 +588,35 @@ zh:
   label_crm_last_year: 去年
 
   #3.2.15
-  permission_export_contacts: 导出联系人和合同
+  permission_export_contacts: 导出联系人和合作
 
   #3.4.0
-  label_crm_deal_contact: 合同的联系人
+  label_crm_deal_contact: 合作的联系人
 
   #3.4.1
   label_crm_default_country: 默认国家
   label_attribute_of_contact: "联系人的%{name}"
   label_crm_contact_country: 联系人的国家
   label_crm_contact_city: 联系人的城市
-  label_attribute_of_deals: "合同的 %{name}"
+  label_attribute_of_deals: "合作的 %{name}"
 
   #3.4.2
-  permission_manage_public_deals_queries: 管理合同公共查询
-  permission_save_deals_queries: 保存合同查询
+  permission_manage_public_deals_queries: 管理合作公共查询
+  permission_save_deals_queries: 保存合作查询
   permission_manage_contact_issue_relations: 管理问题关系
 
   #3.4.4
   label_crm_pipeline: 流水线
-  text_crm_no_deal_statuses_in_project: 项目中没有合同状态
+  text_crm_no_deal_statuses_in_project: 项目中没有合作状态
+
+  #3.4.6
+  label_crm_contact_email: 联系邮件
+  label_crm_light_free_version: CRM Light 免费版本
+  label_crm_link_to_pro: 升级到PRO版本
+  label_crm_link_to_pro_demo: PRO 版本演示Demo
+  label_crm_link_to_more_plugins: 查找更多的 RedmineCRM 插件
+
+
+  text_crm_string_incorrect_format: 格式不正确
+
+  label_deal_items: 合作名目

@@ -183,6 +183,10 @@ function showContactTab(name, url) {
   return false;
 }
 
+function tooglePriceField() {
+  $('#deal_price').prop( "disabled", $('.line:visible').size() > 0 );
+}
+
 function toggleCRMIssuesSelection(el) {
   var boxes = $(el).parents('form').find('input[type=checkbox]');
   var all_checked = true;
@@ -196,4 +200,21 @@ function toggleCRMIssuesSelection(el) {
       $(this).parents('tr').addClass('context-menu-selection');
     }
   });
+}
+
+function toogleDealItems(el) {
+  $(el).closest('p').hide();
+  $('.deal_items').show();
+}
+
+function uploadAvatar(element) {
+  var fileSpan = $('<span>', { id: 'attachments_0'});
+  $('#contact_data #attachments_fields').html('');
+  fileSpan.append(
+      $('<input>', { type: 'hidden', class: 'filename', name: 'attachments[0][filename]'} ).val(element.files[0].name),
+      $('<input>', { type: 'hidden', class: 'description', name: 'attachments[0][description]' } ).val('avatar'),
+      $('<input>', { type: 'hidden', class: 'token', name: 'attachments[0][token]' } )
+  ).appendTo('#contact_data #attachments_fields');
+  ajaxUpload(element.files[0], 0, fileSpan, element);
+  return 0;
 }

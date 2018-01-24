@@ -9,7 +9,7 @@ deal_001:
   author_id: 1
   status_id: 1
   assigned_to_id: 1
-  due_date: <%= Time.now.to_s(:db) %>
+  due_date: "<%= Time.now.to_s(:db) %>"
   price: 3000
 
 deal_002:
@@ -20,7 +20,7 @@ deal_002:
   background: Test deal two
   author_id: 2
   status_id: 3
-  due_date: <%= 3.days.from_now.to_s(:db) %>
+  due_date: "<%= 3.days.from_now.to_s(:db) %>"
   price: 10000
   currency: "USD"
 
@@ -32,7 +32,7 @@ deal_003:
   background: Cross project deal
   author_id: 2
   status_id: 2
-  due_date: <%= 1.days.from_now.to_s(:db) %>
+  due_date: "<%= 1.days.from_now.to_s(:db) %>"
   price: 5000
   currency: "USD"
 
@@ -43,7 +43,7 @@ deal_004:
   background: Deal without contact
   author_id: 2
   status_id: 1
-  due_date: <%= 2.days.from_now.to_s(:db) %>
+  due_date: "<%= 2.days.from_now.to_s(:db) %>"
   price: 25500
   currency: "RUB"
 

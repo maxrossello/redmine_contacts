@@ -615,3 +615,8 @@ en:
   label_crm_link_to_pro: Upgrade to PRO
   label_crm_link_to_pro_demo: PRO version live demo
   label_crm_link_to_more_plugins: Find more RedmineCRM plugins
+
+
+  text_crm_string_incorrect_format: have incorrect format
+
+  label_deal_items: Deal items

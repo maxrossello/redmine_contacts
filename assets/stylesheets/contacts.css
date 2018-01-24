@@ -153,6 +153,12 @@ span.tag-label-color {
   margin: 0px 0px 5px 2px;
 }
 
+.tag-label .tag-count,
+.tag-label-color .tag-count { 
+	font-size: .75em; 
+	margin-left: .5em; 
+}
+
 span.tag-label-color:hover {
   background-color: #9DB9D5;
 }
@@ -178,6 +184,9 @@ span.tag-label-color a, span.tag-label-color > span {
 }
 
 div#tags_data span.contextual {float: none; padding-left: 0px;}
+#tags_data:hover #edit_tags_link {opacity: 1;}
+#edit_tags_link {opacity: 0;}
+
 
 span.tag-label, span.tag-input {
 	display: inline-block;
@@ -289,12 +298,14 @@ table.list td.phones {
 }
 
 table.list td.address,
+table.list td.tags,
 table.list td.street1,
 table.list td.street2,
 table.list td.background {
   text-align: left;
 }
 
+table.list tr td.tags {white-space: normal;}
 
 /**************************************************************/
 /*                   TABLE LIST                               */
@@ -716,3 +727,6 @@ div.ui-dialog  {
 #issue_contacts a.delete {opacity: 0.4;}
 #issue_contacts a.delete:hover {opacity: 1;}
 #issue_contacts img.gravatar {vertical-align: middle; margin: 0 4px 2px 0;}
+
+.hidden { display: none; }
+.select2-results ul.select2-results__options li.loading-results { display: none; }

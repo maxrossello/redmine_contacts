@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,9 +20,8 @@
 module RedmineContacts
   module Hooks
     class ViewsLayoutsHook < Redmine::Hook::ViewListener
-      def view_layouts_base_html_head(context={})
-        return stylesheet_link_tag(:contacts, :plugin => 'redmine_contacts')
-      end
+      render_on :view_layouts_base_body_bottom, :partial => 'common/contacts_select2_data'
+      render_on :view_layouts_base_html_head, :partial => 'contacts_issues/additional_assets'
     end
   end
 end

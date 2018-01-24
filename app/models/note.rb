@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class Note < ActiveRecord::Base
   acts_as_attachable
 
   acts_as_event :title => Proc.new {|o| "#{l(:label_crm_note_for)}: #{o.source.name}"},
-                :type => "issue-note",
+                :type => "icon issue-note icon-issue-note",
                 :group => :source,
                 :url => Proc.new {|o| {:controller => 'notes', :action => 'show', :id => o.id }},
                 :description => Proc.new {|o| o.content}

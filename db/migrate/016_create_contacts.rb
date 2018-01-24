@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,8 +41,9 @@ class CreateContacts < ActiveRecord::Migration
     end
 
     add_index :contacts, :author_id
-    add_index :contacts, :is_company
     add_index :contacts, :company
+    add_index :contacts, :is_company
+    add_index :contacts, :email
     add_index :contacts, :first_name
     add_index :contacts, :assigned_to_id
 

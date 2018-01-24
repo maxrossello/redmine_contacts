@@ -3,8 +3,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class ContactsControllerTest < ActionController::TestCase
     User.current = nil
   end
 
-  test "should get index" do
+  def test_get_index
     # log_user('admin', 'admin')
     @request.session[:user_id] = 1
     assert_not_nil Contact.find(1)
@@ -80,8 +80,8 @@ class ContactsControllerTest < ActionController::TestCase
     assert_select 'a', :html => /Marat/
     assert_select 'h3', :html => /Tags/
     assert_select 'h3', :html => /Recently viewed/
-    assert_select 'div#tags span#single_tags span.tag-label-color a', "test (3)"
-    assert_select 'div#tags span#single_tags span.tag-label-color a', "main (2)"
+    assert_select 'div#tags span#single_tags span.tag-label-color a', "test"
+    assert_select 'div#tags span#single_tags span.tag-label-color a', "main"
     # assert_select 'div#tags span#single_tags span.tag-label-color a', { :count => 2, :text =>/(test (2)|main (2))/}
     #   assert_select 'a', "main (2)"
     #   assert_select 'a', "test (2)"
@@ -228,6 +228,24 @@ class ContactsControllerTest < ActionController::TestCase
     assert_equal Contact.find(1), assigns(:contact)
   end
 
+  def test_get_edit_with_duplicates
+    contact = Contact.find(3)
+    contact_clone = contact.dup
+    contact_clone.project = contact.project
+    contact_clone.save!
+
+    @request.session[:user_id] = 2
+    Setting.default_language = 'en'
+
+    get :edit, :id => 3
+    assert_response :success
+    assert_template :edit
+    assert_select 'div#duplicates', 1
+    assert_select 'div#duplicates h3', /Possible duplicates/
+  ensure
+    contact_clone.delete
+  end
+
   test "should put update" do
     @request.session[:user_id] = 1
 
@@ -318,15 +336,15 @@ class ContactsControllerTest < ActionController::TestCase
 
   test "should create with avatar" do
     image = Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/files/image.jpg'
-    avatar = Rack::Test::UploadedFile.new(image, "image/jpeg")
+    attach = Attachment.create!(:file => Rack::Test::UploadedFile.new(image, "image/jpeg"), :author => User.find(1))
+
     @request.session[:user_id] = 1
     assert_difference 'Contact.count' do
       post :create, :project_id => 1,
-                    :contact_avatar => { :file => avatar },
+                    :attachments => { '0' => { 'filename' => 'image.jpg', 'description' => 'avatar', 'token'=> attach.token } },
                     :contact => {:last_name => "Testov",
                                  :middle_name => "Test",
                                  :first_name => "Testovich"}
-
     end
 
     assert_redirected_to :controller => 'contacts', :action => 'show', :id => Contact.last.id, :project_id => Contact.last.project

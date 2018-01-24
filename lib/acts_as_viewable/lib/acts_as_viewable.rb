@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,8 +28,11 @@ module ActsAsViewable
         cattr_accessor :viewable_options
         self.viewable_options = {}
         viewable_options[:info] = options.delete(:info) || "info".to_sym
-
-        has_many :views, :order => "#{RecentlyViewed.table_name}.updated_at DESC", :class_name => "RecentlyViewed", :as => :viewed, :dependent => :delete_all
+        if ActiveRecord::VERSION::MAJOR >= 4
+          has_many :views, lambda { order("#{RecentlyViewed.table_name}.updated_at DESC") }, :class_name => "RecentlyViewed", :as => :viewed, :dependent => :delete_all
+        else
+          has_many :views, :order => "#{RecentlyViewed.table_name}.updated_at DESC", :class_name => "RecentlyViewed", :as => :viewed, :dependent => :delete_all
+        end
 
         # attr_reader :info
 

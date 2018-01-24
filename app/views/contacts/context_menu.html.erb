@@ -19,7 +19,7 @@
     <%= call_hook(:view_contacts_context_menu_before_delete, {:contacts => @contacts, :can => @can, :back => @back }) %>
 
      <li><%= context_menu_link l(:button_delete), {:controller => 'contacts', :action => 'bulk_destroy', :ids => @contacts.collect(&:id), :project_id => @project},
-                            :method => :delete, :confirm => l(:text_are_you_sure), :class => 'icon-del', :disabled => !@can[:delete] %></li>
+                            :method => :delete, :data => {:confirm => l(:text_are_you_sure)}, :class => 'icon-del', :disabled => !@can[:delete] %></li>
     <% if !@contact && Redmine::VERSION.to_s >= '3.3' %>
       <li>
         <%= context_menu_link l(:button_filter), _project_contacts_path(@project, :set_filter => 1, :ids => @contacts.map(&:id).join(',')),

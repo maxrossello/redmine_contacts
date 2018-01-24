@@ -592,3 +592,7 @@ ru:
   label_crm_link_to_pro: Обновление до PRO
   label_crm_link_to_pro_demo: Онлайн демо PRO
   label_crm_link_to_more_plugins: Другие плагины RedmineCRM
+
+  text_crm_string_incorrect_format: имеет неправильный формат
+
+  label_deal_items: Объекты сделки

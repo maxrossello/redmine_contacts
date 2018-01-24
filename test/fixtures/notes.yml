@@ -6,7 +6,7 @@ note_001:
   source_id: 1
   source_type: Contact
   author_id: 1
-  created_on: <%= (Time.now - 4.days).to_s(:db) %>
+  created_on: "<%= (Time.now - 4.days).to_s(:db) %>"
 note_002:
   id: 2
   subject: Note 2 subject
@@ -14,7 +14,7 @@ note_002:
   source_id: 1
   source_type: Contact
   author_id: 2
-  created_on: <%= (Time.now - 2.days).to_s(:db) %>
+  created_on: "<%= (Time.now - 2.days).to_s(:db) %>"
 note_003:
   id: 3
   subject: Note 3 subject
@@ -22,7 +22,7 @@ note_003:
   source_id: 2
   source_type: Contact
   author_id: 1
-  created_on: <%= (Time.now - 1.days).to_s(:db) %>
+  created_on: "<%= (Time.now - 1.days).to_s(:db) %>"
 note_004:
   id: 4
   subject: Note 4 subject
@@ -30,7 +30,7 @@ note_004:
   source_id: 3
   source_type: Contact
   author_id: 2
-  created_on: <%= (Time.now + 4.days).to_s(:db) %>
+  created_on: "<%= (Time.now + 4.days).to_s(:db) %>"
 note_005:
   id: 5
   subject: Note 5 subject
@@ -38,4 +38,4 @@ note_005:
   source_id: 1
   source_type: Deal
   author_id: 2
-  created_on: <%= (Time.now + 4.days).to_s(:db) %>
+  created_on: "<%= (Time.now + 4.days).to_s(:db) %>"

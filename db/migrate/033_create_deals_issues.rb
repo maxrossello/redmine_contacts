@@ -1,8 +1,8 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2016 Kirill Bezrukov
-# http://www.redminecrm.com/
+# Copyright (C) 2010-2017 RedmineUP
+# http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@ class CreateDealsIssues < ActiveRecord::Migration
       t.integer :issue_id, :default => 0, :null => false
       t.integer :deal_id, :default => 0, :null => false
     end
-    add_index :deals_issues, [:issue_id, :deal_id]
+    add_index :deals_issues, :issue_id
+    add_index :deals_issues, :deal_id
   end
 
 end
