@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 
 module RedmineContacts
   module Patches
-
     module MailerPatch
       module ClassMethods
       end
@@ -38,7 +37,6 @@ module RedmineContacts
           mail :to => recipients,
                :cc => cc,
                :subject => "[#{note.source.project.name}] - #{l(:label_crm_note_for)} #{note.source.name}"
-
         end
 
         def crm_contact_add(contact)
@@ -53,7 +51,6 @@ module RedmineContacts
           mail :to => recipients,
                :cc => cc,
                :subject => "[#{contact.project.name} - #{l(:label_contact)} ##{contact.id}] #{contact.name}"
-
         end
 
         def crm_issue_connected(issue, contact)
@@ -70,7 +67,6 @@ module RedmineContacts
                :issue_url => url_for(:controller => "issues", :action => "show", :id => issue)
           render_multipart('issue_connected', body)
         end
-
       end
 
       def self.included(receiver)
@@ -82,9 +78,7 @@ module RedmineContacts
           # self.instance_variable_get("@inheritable_attributes")[:view_paths] << RAILS_ROOT + "/vendor/plugins/redmine_contacts/app/views"
         end
       end
-
     end
-
   end
 end
 

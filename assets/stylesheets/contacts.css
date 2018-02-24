@@ -446,7 +446,7 @@ table.list.deal-board tbody tr:hover {background-color: white;}
 	margin: 5px;
 }
 .deal-board .deal-card {background-color: #ffffdd;}
-.deal-board .deal-status-col {text-align: left; white-space: normal;}
+.deal-board .deal-status-col {text-align: left; white-space: normal;vertical-align: top}
 .deal-board .avatar {float: left; margin-right: 5px;}
 .deal-board p.name {
 	margin-bottom: 5px;

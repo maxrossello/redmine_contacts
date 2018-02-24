@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-# require 'redmine_contacts/helpers/money_helper'
+require 'redmine_contacts/patches/action_controller_patch'
+require 'redmine_contacts/patches/compatibility/application_helper_patch'
 require 'redmine_contacts/helpers/contacts_helper'
 require 'redmine_contacts/helpers/crm_calendar_helper'
 
@@ -44,6 +45,7 @@ require 'redmine_contacts/patches/application_controller_patch'
 require 'redmine_contacts/patches/attachments_controller_patch'
 require 'redmine_contacts/patches/auto_completes_controller_patch'
 require 'redmine_contacts/patches/issue_query_patch'
+require 'redmine_contacts/patches/time_entry_query_patch'
 require 'redmine_contacts/patches/query_patch'
 if Redmine::VERSION.to_s >= '3.4' || Redmine::VERSION::BRANCH != 'stable'
   require 'redmine_contacts/patches/query_filter_patch'

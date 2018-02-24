@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -23,69 +23,68 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class AddressTest < ActiveSupport::TestCase
-
   def setup
-    Setting.plugin_redmine_contacts["post_address_format"] = nil
+    Setting.plugin_redmine_contacts['post_address_format'] = nil
   end
 
   def test_should_generate_full_address
     address = Address.new
-    address.street1 = "300 Boylston Ave E"
-    address.street2 = "Piso2 Dto.4"
-    address.city = "Seattle"
-    address.region = "WA"
-    address.postcode = "98102"
-    address.country_code = "US"
+    address.street1 = '300 Boylston Ave E'
+    address.street2 = 'Piso2 Dto.4'
+    address.city = 'Seattle'
+    address.region = 'WA'
+    address.postcode = '98102'
+    address.country_code = 'US'
     address.save
     address.reload
 
-    assert_equal "300 Boylston Ave E, Piso2 Dto.4, Seattle, 98102, WA, United States", address.full_address
+    assert_equal '300 Boylston Ave E, Piso2 Dto.4, Seattle, 98102, WA, United States', address.full_address
   end
 
   def test_should_generate_to_s
     address = Address.new
-    address.street1 = "300 Boylston Ave E"
-    address.street2 = "Piso2 Dto.4"
-    address.city = "Seattle"
-    address.region = "WA"
-    address.postcode = "98102"
-    address.country_code = "US"
+    address.street1 = '300 Boylston Ave E'
+    address.street2 = 'Piso2 Dto.4'
+    address.city = 'Seattle'
+    address.region = 'WA'
+    address.postcode = '98102'
+    address.country_code = 'US'
 
-    assert_equal "300 Boylston Ave E, Piso2 Dto.4, Seattle, 98102, WA, United States", address.to_s
+    assert_equal '300 Boylston Ave E, Piso2 Dto.4, Seattle, 98102, WA, United States', address.to_s
   end
 
   def test_should_generate_particular_full_address
     address = Address.new
-    address.street1 = "300 Boylston Ave E"
-    address.city = "Seattle"
-    address.postcode = "98102"
-    address.region = ""
-    address.country_code = "US"
+    address.street1 = '300 Boylston Ave E'
+    address.city = 'Seattle'
+    address.postcode = '98102'
+    address.region = ''
+    address.country_code = 'US'
     address.save
     address.reload
 
-    assert_equal "300 Boylston Ave E, Seattle, 98102, United States", address.full_address
+    assert_equal '300 Boylston Ave E, Seattle, 98102, United States', address.full_address
   end
 
   def test_should_generate_us_post_address
     address = Address.new
-    address.street1 = "300 Boylston Ave E"
-    address.city = "Seattle"
-    address.postcode = "98102"
-    address.region = "WA"
-    address.country_code = "US"
+    address.street1 = '300 Boylston Ave E'
+    address.city = 'Seattle'
+    address.postcode = '98102'
+    address.region = 'WA'
+    address.country_code = 'US'
 
     assert_equal "300 Boylston Ave E\nSeattle, 98102\nWA\nUnited States", address.post_address
   end
 
   def test_should_generate_us_post_address_with_double_spaces
-    Setting.plugin_redmine_contacts["post_address_format"] = "%street1%\n%street2%\n%city% %region% %postcode%\n%country%"
+    Setting.plugin_redmine_contacts['post_address_format'] = "%street1%\n%street2%\n%city% %region% %postcode%\n%country%"
     address = Address.new
-    address.street1 = "300 Boylston Ave E"
-    address.city = "Seattle"
-    address.postcode = "98102"
-    address.region = "WA"
-    address.country_code = "US"
+    address.street1 = '300 Boylston Ave E'
+    address.city = 'Seattle'
+    address.postcode = '98102'
+    address.region = 'WA'
+    address.country_code = 'US'
 
     assert_equal "300 Boylston Ave E\nSeattle WA 98102\nUnited States", address.post_address
   end
@@ -94,9 +93,9 @@ class AddressTest < ActiveSupport::TestCase
     address = Address.new
     address.street1 = "ул. Маршала Жукова, 6"
     address.city = "г. Арзамас"
-    address.postcode = "611137"
+    address.postcode = '611137'
     address.region = "Нижегородская область"
-    address.country_code = "RU"
+    address.country_code = 'RU'
 
     assert_equal "ул. Маршала Жукова, 6\nг. Арзамас, 611137\nНижегородская область\nRussia", address.post_address
   end
@@ -105,19 +104,19 @@ class AddressTest < ActiveSupport::TestCase
     address = Address.new
     address.street1 = "ул. Новая Басманная, 14"
     address.city = "г. Москва"
-    address.postcode = "145013"
-    address.country_code = "RU"
+    address.postcode = '145013'
+    address.country_code = 'RU'
 
     assert_equal "ул. Новая Басманная, 14\nг. Москва, 145013\nRussia", address.post_address
   end
 
   def test_should_strip_empty_lines_and_punctuation
-    Setting.plugin_redmine_contacts["post_address_format"] = "%street1%,\n,%street2%,,,\n%city%, %postcode%\n%region%\n%country%"
+    Setting.plugin_redmine_contacts['post_address_format'] = "%street1%,\n,%street2%,,,\n%city%, %postcode%\n%region%\n%country%"
 
     address = Address.new
-    address.city = "Seattle"
-    address.region = "WA"
-    address.country_code = "US"
+    address.city = 'Seattle'
+    address.region = 'WA'
+    address.country_code = 'US'
 
     assert_equal "Seattle\nWA\nUnited States", address.post_address
   end

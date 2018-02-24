@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -61,78 +61,73 @@ class RedmineContacts::CommonViewsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Red
 
   def setup
     RedmineContacts::TestCase.prepare
-
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-    @request.env['HTTP_REFERER'] = '/'
   end
 
-  test "View user" do
-    log_user("admin", "admin")
-    get "/users/2"
+  test 'View user' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/users/2'
     assert_response :success
   end
 
-  test "View contacts activity" do
-    log_user("admin", "admin")
-    get "/projects/ecookbook/activity?show_contacts=1"
+  test 'View contacts activity' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/projects/ecookbook/activity?show_contacts=1'
     assert_response :success
   end
 
-  test "View contacts settings" do
-    log_user("admin", "admin")
-    get "/settings/plugin/redmine_contacts"
+  test 'View contacts settings' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/settings/plugin/redmine_contacts'
     assert_response :success
   end
 
-  test "View contacts project settings" do
-    log_user("admin", "admin")
-    get "/projects/ecookbook/settings/contacts"
+  test 'View contacts project settings' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/projects/ecookbook/settings/contacts'
     assert_response :success
   end
 
-  test "View contact tag edit" do
-    log_user("admin", "admin")
-    get "/contacts_tags/1/edit"
+  test 'View contact tag edit' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/contacts_tags/1/edit'
     assert_response :success
   end
 
-  test "Global search with contacts" do
-    log_user("admin", "admin")
-    get "/search?q=Domoway"
+  test 'Global search with contacts' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/search?q=Domoway'
     assert_response :success
   end
 
-  test "View contacts project notes list" do
-    log_user("admin", "admin")
-    get "/projects/ecookbook/contacts/notes"
+  test 'View contacts project notes list' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/projects/ecookbook/contacts/notes'
     assert_response :success
   end
 
-  test "View contacts notes list" do
-    log_user("admin", "admin")
-    get "/contacts/notes"
+  test 'View contacts notes list' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/contacts/notes'
     assert_response :success
   end
 
-  test "View issue contacts" do
-    log_user("admin", "admin")
+  test 'View issue contacts' do
+    log_user('admin', 'admin')
     EnabledModule.create(:project_id => 1, :name => 'issue_tracking')
     issue = Issue.where(:id => 1).first
     contact = Contact.where(:id => 1).first
     issue.contacts << contact
     issue.save
-    get "/issues/1"
+    compatible_request :get, '/issues/1'
     assert_response :success
   end
 
-  test "View user with contact relation" do
-    log_user("admin", "admin")
-    get "/users/2"
+  test 'View user with contact relation' do
+    log_user('admin', 'admin')
+    compatible_request :get, '/users/2'
     assert_response :success
     # assert_tag :div,
     #   :content => /John Smith/,
     #   :attributes => { :class => 'contact card' }
   end
-
 end

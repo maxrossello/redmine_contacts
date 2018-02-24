@@ -18,9 +18,34 @@
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
 module RedmineContacts
-  module Hooks
-    class ViewsUsersHook < Redmine::Hook::ViewListener
-      render_on :view_projects_show_left, :partial => "projects/contacts"
+  module Patches
+    module ActionControllerPatch
+      def self.included(base)
+        base.extend(ClassMethods) if Rails::VERSION::MAJOR < 4
+
+        base.class_eval do
+        end
+      end
+
+      module ClassMethods
+        if Rails::VERSION::MAJOR < 4
+          def before_action(*filters, &block)
+            before_filter(*filters, &block)
+          end
+
+          def after_action(*filters, &block)
+            after_filter(*filters, &block)
+          end
+
+          def skip_before_action(*filters)
+            skip_before_filter(*filters)
+          end
+        end
+      end
     end
   end
+end
+
+unless ActionController::Base.included_modules.include?(RedmineContacts::Patches::ActionControllerPatch)
+  ActionController::Base.send(:include, RedmineContacts::Patches::ActionControllerPatch)
 end

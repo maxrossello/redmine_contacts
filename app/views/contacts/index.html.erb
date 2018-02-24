@@ -1,3 +1,4 @@
+<% filtered_params = params.respond_to?(:to_unsafe_hash) ? params.to_unsafe_hash : params %>
 <div class="contextual">
     <%= link_to_if_authorized l(:label_crm_contact_new), {:controller => 'contacts', :action => 'new', :project_id => @project}, :class => 'icon icon-add' %>
     <%= call_hook(:view_contacts_action_menu) %>
@@ -51,19 +52,20 @@
 
 <%= error_messages_for 'query' %>
 <% if @query.valid? %>
-    <div id="contact_list">
+  <div id="contact_list">
     <% if @contacts.empty? %>
-        <p class="nodata"><%= l(:label_no_data) %></p>
+      <p class="nodata"><%= l(:label_no_data) %></p>
     <% else %>
       <%= render :partial => contacts_list_style %>
       <span class="pagination"><%= pagination_links_full @contacts_pages, @contacts_count %></span>
     <% end %>
-    </div>
+  </div>
+  <% if User.current.allowed_to?(:export_contacts, @project, :global => true) %>
     <% other_formats_links do |f| %>
-        <%= f.link_to 'Atom', :url => params.merge(:key => User.current.rss_key) %>
-    <% end if User.current.allowed_to?(:export_contacts, @project, :global => true) %>
+      <%= f.link_to 'Atom', :url => filtered_params.merge(:key => User.current.rss_key) %>
+    <% end %>
+  <% end %>
 <% end %>
-
 
 <% content_for :sidebar do %>
      

@@ -38,10 +38,12 @@
           <% end %>
         <% end %>
         </div>
-        <div class="wiki note">
-          <%= note_content(note_item) %>
+        <div class="note">
+          <div class="wiki">
+            <%= note_content(note_item) %>
+          </div> 
           <%= auto_contacts_thumbnails(note_item) %>
-          <%= render :partial => 'attachments/links', :locals => {:attachments => note_item.attachments, :options  => {}} if note_item.attachments.any? %>
+            <%= render :partial => 'attachments/links', :locals => {:attachments => note_item.attachments, :options  => {}} if note_item.attachments.any? %>
         </div>
       </td>
     </tr>

@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -20,10 +20,10 @@
 class TasksController < ApplicationController
   unloadable
 
-  before_filter :find_project_by_project_id, :authorize, :except => [:index]
-  before_filter :find_optional_project, :only => :index
-  before_filter :find_taskable, :except => [:index, :add, :close]
-  before_filter :find_issue, :except => [:index, :new]
+  before_action :find_project_by_project_id, :authorize, :except => [:index]
+  before_action :find_optional_project, :only => :index
+  before_action :find_taskable, :except => [:index, :add, :close]
+  before_action :find_issue, :except => [:index, :new]
 
   def new
     issue = Issue.new
@@ -47,9 +47,9 @@ class TasksController < ApplicationController
   end
 
   def add
-    @show_form = "true"
+    @show_form = 'true'
 
-    if params[:source_id] && params[:source_type] && request.post? then
+    if params[:source_id] && params[:source_type] && request.post?
       find_taskable
       @taskable.issues << @issue
       @taskable.save
@@ -69,7 +69,7 @@ class TasksController < ApplicationController
 
   def delete
     @issue.taskables.delete(@taskable)
-    taskable_name =  @taskable.class.name.underscore
+    taskable_name = @taskable.class.name.underscore
     respond_to do |format|
       format.html { redirect_to :back }
       format.js do
@@ -86,12 +86,11 @@ class TasksController < ApplicationController
     respond_to do |format|
       format.js do
         render :update do |page|
-            page["issue_#{params[:issue_id]}"].visual_effect :fade
+          page["issue_#{params[:issue_id]}"].visual_effect :fade
         end
       end
-      format.html {redirect_to :back }
+      format.html { redirect_to :back }
     end
-
   end
 
   private
@@ -108,6 +107,4 @@ class TasksController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render_404
   end
-
-
 end

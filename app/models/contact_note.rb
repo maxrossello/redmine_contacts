@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,9 +19,12 @@
 
 class ContactNote < Note
   unloadable
+  include Redmine::SafeAttributes
+
   belongs_to :contact, :foreign_key => :source_id
 
-  attr_accessible :subject, :type_id, :content, :source, :author_id if ActiveRecord::VERSION::MAJOR >= 4
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
+  safe_attributes 'subject', 'type_id', 'content', 'source', 'author_id'
 
   if ActiveRecord::VERSION::MAJOR >= 4
     if ActiveRecord::Base.connection.table_exists?('notes')
@@ -34,13 +37,13 @@ class ContactNote < Note
     acts_as_activity_provider :type => 'contacts',
                               :permission => :view_contacts,
                               :author_key => :author_id,
-                              :find_options => {:include => [:contact => :projects], :conditions => {:source_type => 'Contact'} }
+                              :find_options => { :include => [:contact => :projects], :conditions => { :source_type => 'Contact' } }
   end
 
   scope :visible,
-        lambda {|*args| joins([:contact => :projects]).
-                        where(Contact.visible_condition(args.shift || User.current, *args) +
-                                         " AND (#{ContactNote.table_name}.source_type = 'Contact')")}
+        lambda { |*args| joins([:contact => :projects]).
+                         where(Contact.visible_condition(args.shift || User.current, *args) +
+                                          " AND (#{ContactNote.table_name}.source_type = 'Contact')") }
 
   acts_as_attachable :view_permission => :view_contacts,
                      :delete_permission => :edit_contacts

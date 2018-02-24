@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -57,44 +57,35 @@ class NotesControllerTest < ActionController::TestCase
 
   def setup
     RedmineContacts::TestCase.prepare
-
-    @controller  = NotesController.new
-    @request     = ActionController::TestRequest.new
-    @response    = ActionController::TestResponse.new
     User.current = nil
     @request.env['HTTP_REFERER'] = '/'
   end
 
-  test "should post add note to contact" do
+  def test_should_post_add_note_to_contact
     @request.session[:user_id] = 1
     assert_difference 'Note.count' do
-      post :create, :project_id => 1,
-                    :note => {
-                                :subject => "Note subject",
-                                :content => "Note *content*"},
-                    :source_type => Contact.to_s,
-                    :source_id => 1
-
+      compatible_request :post, :create, :project_id => 1,
+                                         :note => { :subject => 'Note subject',
+                                                    :content => 'Note *content*' },
+                                         :source_type => Contact.to_s,
+                                         :source_id => 1
     end
 
-    note = Note.where(:subject => "Note subject", :content => "Note *content*").first
+    note = Note.where(:subject => 'Note subject', :content => 'Note *content*').first
     assert_not_nil note
     assert_equal 1, note.source_id
     assert_equal Contact, note.source.class
   end
 
-  test "should put update" do
+  def test_should_put_update
     @request.session[:user_id] = 1
 
     note = Note.find(1)
-    old_content = note.content
     new_content = 'New note content'
 
-    put :update, :id => 1, :project_id => 1, :note => {:content => new_content}
+    compatible_request :put, :update, :id => 1, :project_id => 1, :note => { :content => new_content }
     assert_redirected_to :action => 'show', :project_id => note.source.project, :id => note.id
     note.reload
     assert_equal new_content, note.content
-
   end
-
 end

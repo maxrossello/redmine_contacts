@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -24,7 +24,8 @@ module RedmineContacts
         base.send(:include, InstanceMethods)
 
         base.class_eval do
-          alias_method_chain :user_setup, :contacts
+          alias_method :user_setup_without_contacts, :user_setup
+          alias_method :user_setup, :user_setup_with_contacts
         end
       end
 
@@ -33,7 +34,6 @@ module RedmineContacts
           user_setup_without_contacts
           ContactsSetting.check_cache
         end
-
       end
     end
   end

@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -58,10 +58,6 @@ class ContactsDuplicatesControllerTest < ActionController::TestCase
 
   def setup
     RedmineContacts::TestCase.prepare
-
-    @controller = ContactsDuplicatesController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
     User.current = nil
   end
 
@@ -74,9 +70,8 @@ class ContactsDuplicatesControllerTest < ActionController::TestCase
     @request.session[:user_id] = 2
     Setting.default_language = 'en'
 
-    get :index, :project_id => contact.project, :contact_id => 3
+    compatible_request :get, :index, :project_id => contact.project, :contact_id => 3
     assert_response :success
-    assert_template :index
     assert_select 'ul#contact_duplicates li', 1
     assert_select 'ul#contact_duplicates li a', contact.name
   ensure
@@ -84,27 +79,25 @@ class ContactsDuplicatesControllerTest < ActionController::TestCase
   end
 
   def test_get_merge_duplicates
-    # log_user('admin', 'admin')
     @request.session[:user_id] = 1
     Setting.default_language = 'en'
 
-    get :merge, :project_id => 1, :contact_id => 1, :duplicate_id => 2
-    assert_redirected_to :controller => "contacts", :action => 'show', :id => 2, :project_id => 'ecookbook'
+    compatible_request :get, :merge, :project_id => 1, :contact_id => 1, :duplicate_id => 2
+    assert_redirected_to :controller => 'contacts', :action => 'show', :id => 2, :project_id => 'ecookbook'
 
     contact = Contact.find(2)
-    assert_equal contact.emails, ["marat@mail.ru", "marat@mail.com", "ivan@mail.com"]
+    assert_equal contact.emails, ['marat@mail.ru', 'marat@mail.com', 'ivan@mail.com']
   end
 
   def test_xhr_get_duplicates
     @request.session[:user_id] = 1
-    xhr :get, :duplicates, :project_id => 'ecookbook', :contact => {:first_name => 'marat'}
+    compatible_xhr_request :get, :duplicates, :project_id => 'ecookbook', :contact => { :first_name => 'marat' }
     assert_match /Marat Aminov/, @response.body
   end
 
   def test_xhr_get_search
     @request.session[:user_id] = 1
-    xhr :get, :search, :project_id => 'ecookbook', :contact_id => 2, :q => 'iva'
+    compatible_xhr_request :get, :search, :project_id => 'ecookbook', :contact_id => 2, :q => 'iva'
     assert_match /Ivan Ivanov/, @response.body
   end
-
 end

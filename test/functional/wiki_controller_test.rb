@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -67,37 +67,37 @@ class WikiControllerTest < ActionController::TestCase
     @page = @wiki.find_or_new_page(@page_name)
     @page.content = WikiContent.new
     @page.content.text = 'test'
+    @page.content.author = User.find(1)
     @page.save!
   end
 
   def test_show_with_contact_macro
     @request.session[:user_id] = 1
-    @page.content.text = "{{contact(1)}}"
+    @page.content.text = '{{contact(1)}}'
     @page.content.save!
-    get :show, :project_id => 1, :id => @page_name
+    compatible_request :get, :show, :project_id => 1, :id => @page_name
     assert_response :success
-    assert_template 'show'
+    assert_select 'h3', 'Wiki'
     assert_select 'div.wiki p', /Ivan Ivanov/
   end
 
   def test_show_with_contact_avatar_macro
     @request.session[:user_id] = 1
-    @page.content.text = "{{contact_avatar(1)}}"
+    @page.content.text = '{{contact_avatar(1)}}'
     @page.content.save!
-    get :show, :project_id => 1, :id => @page_name
+    compatible_request :get, :show, :project_id => 1, :id => @page_name
     assert_response :success
-    assert_template 'show'
+    assert_select 'h3', 'Wiki'
     assert_select 'div.wiki p img'
   end
 
   def test_show_with_note_macro
     @request.session[:user_id] = 1
-    @page.content.text = "{{contact_note(1)}}"
+    @page.content.text = '{{contact_note(1)}}'
     @page.content.save!
-    get :show, :project_id => 1, :id => @page_name
+    compatible_request :get, :show, :project_id => 1, :id => @page_name
     assert_response :success
-    assert_template 'show'
+    assert_select 'h3', 'Wiki'
     assert_select 'div.wiki p', /Note 1 content with wiki syntax/
   end
-
 end

@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,8 +19,7 @@
 
 class Note < ActiveRecord::Base
   unloadable
-
-  attr_accessible :subject, :type_id, :author_id, :note_time, :content, :created_on, :custom_field_values
+  include Redmine::SafeAttributes
 
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
   belongs_to :source, :polymorphic => true, :touch => true
@@ -44,6 +43,9 @@ class Note < ActiveRecord::Base
   @@note_types = {:email => 0, :call => 1, :meeting => 2}
   cattr_accessor :cut_length
   @@cut_length = 1000
+
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
+  safe_attributes 'subject', 'type_id', 'author_id', 'note_time', 'content', 'created_on', 'custom_field_values'
 
   def self.note_types
     @@note_types

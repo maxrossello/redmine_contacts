@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ class NotesHelperTest < ActionView::TestCase
 
   def test_authoring_note_without_time
     RedmineContacts.settings[:note_authoring_time] = false
-    assert_nothing_raised { authoring_note('2012-12-12 10:00'.to_time, User.find(1))}
+    assert_nothing_raised { authoring_note('2012-12-12 10:00'.to_time, User.find(1)) }
   end
 
   def test_authoring_note_with_time
@@ -63,17 +63,16 @@ class NotesHelperTest < ActionView::TestCase
 
   def test_authoring_note_without_time_with_empty_time
     RedmineContacts.settings[:note_authoring_time] = true
-    assert_nothing_raised { authoring_note(nil, User.find(1))}
+    assert_nothing_raised { authoring_note(nil, User.find(1)) }
   end
 
   def test_authoring_note_without_time_with_empty_time
     RedmineContacts.settings[:note_authoring_time] = false
-    assert_nothing_raised { authoring_note(nil, User.find(1))}
+    assert_nothing_raised { authoring_note(nil, User.find(1)) }
   end
 
   def test_authoring_note_without_time_with_empty_user
     RedmineContacts.settings[:note_authoring_time] = true
     assert_nothing_raised { authoring_note('2012-12-12 10:00'.to_time, nil) }
   end
-
 end

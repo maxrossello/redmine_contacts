@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -23,11 +23,10 @@ class Task < ActiveRecord::Base
 
   after_save :send_mails
 
-private
+  private
 
   def send_mails
-    Mailer.deliver_contacts_issue_connected(Contact.find(self.contact_id), Issue.find(self.issue_id))
-    return true
+    Mailer.deliver_contacts_issue_connected(Contact.find(contact_id), Issue.find(issue_id))
+    true
   end
-
 end

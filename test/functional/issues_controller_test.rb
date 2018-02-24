@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -58,17 +58,13 @@ class IssuesControllerTest < ActionController::TestCase
 
   def setup
     RedmineContacts::TestCase.prepare
-    @controller = IssuesController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
     User.current = nil
+    @request.session[:user_id] = 1
   end
 
   def test_get_show_issue_with_deal_and_contacts
-    @request.session[:user_id] = 1
-    get :show, :id => 1
+    compatible_request :get, :show, :id => 1
     assert_response :success
-    assert_select "#issue_contacts span.contact a", /Marat Aminov/
+    assert_select '#issue_contacts span.contact a', /Marat Aminov/
   end
-
 end

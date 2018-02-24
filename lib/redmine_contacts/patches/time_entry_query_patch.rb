@@ -17,10 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
+require_dependency 'query'
+
 module RedmineContacts
-  module Hooks
-    class ViewsUsersHook < Redmine::Hook::ViewListener
-      render_on :view_projects_show_left, :partial => "projects/contacts"
+  module Patches
+    module TimeEntryQueryPatch
+      def self.included(base)
+        base.send(:include, InstanceMethods)
+        base.send(:include, RedmineContacts::Helper)
+
+        base.class_eval do
+          unloadable
+        end
+      end
+
+      module InstanceMethods
+      end
     end
   end
+end
+
+unless TimeEntryQuery.included_modules.include?(RedmineContacts::Patches::TimeEntryQueryPatch)
+  TimeEntryQuery.send(:include, RedmineContacts::Patches::TimeEntryQueryPatch)
 end

@@ -12,6 +12,7 @@ function filterFormatState (opt) {
 
 function transform_to_select2(field){
   field_format = availableFilters[field]['field_format'];
+  field = field.replace('.', '_');
   initialized_select2 = $('#tr_' + field + ' .values .select2');
   if (initialized_select2.size() == 0 && $.inArray(field_format, field_formats) >= 0) {
     $('#tr_' + field + ' .toggle-multiselect').hide();

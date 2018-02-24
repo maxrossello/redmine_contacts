@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-class AddFieldsToDeals < ActiveRecord::Migration
+class AddFieldsToDeals < Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRecord::Migration[4.2]
   def self.up
     change_column :deals, :duration, :integer, :default => 1
     add_column :deals, :due_date, :timestamp

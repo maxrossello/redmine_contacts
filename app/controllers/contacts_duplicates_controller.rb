@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@ class ContactsDuplicatesController < ApplicationController
   unloadable
   helper :contacts
 
-  before_filter :find_project_by_project_id, :authorize, :except => :search
-  before_filter :find_contact, :except => :duplicates
-  before_filter :find_duplicate, :only => :merge
+  before_action :find_project_by_project_id, :authorize, :except => :search
+  before_action :find_contact, :except => :duplicates
+  before_action :find_duplicate, :only => :merge
 
   helper :contacts
 
@@ -37,11 +37,11 @@ class ContactsDuplicatesController < ApplicationController
     search_middle_name = params[:contact][:middle_name] if params[:contact] && !params[:contact][:middle_name].blank?
 
     @contact = (Contact.find(params[:contact_id]) if !params[:contact_id].blank?) || Contact.new
-    @contact.first_name = search_first_name || ""
-    @contact.last_name = search_last_name || ""
-    @contact.middle_name = search_middle_name || ""
+    @contact.first_name = search_first_name || ''
+    @contact.last_name = search_last_name || ''
+    @contact.middle_name = search_middle_name || ''
     respond_to do |format|
-      format.html {render :partial => "duplicates", :layout => false if request.xhr?}
+      format.html { render :partial => 'duplicates', :layout => false if request.xhr? }
     end
   end
 
@@ -52,7 +52,7 @@ class ContactsDuplicatesController < ApplicationController
     @duplicate.email = (@duplicate.emails | @contact.emails).join(', ')
     @duplicate.phone = (@duplicate.phones | @contact.phones).join(', ')
 
-    call_hook(:controller_contacts_duplicates_merge, {:params => params, :duplicate => @duplicate, :contact => @contact})
+    call_hook(:controller_contacts_duplicates_merge, { :params => params, :duplicate => @duplicate, :contact => @contact })
     @duplicate.tag_list = @duplicate.tag_list | @contact.tag_list
     begin
       Contact.transaction do
@@ -61,12 +61,11 @@ class ContactsDuplicatesController < ApplicationController
         @contact.reload
         @contact.destroy
         flash[:notice] = l(:notice_successful_merged)
-        redirect_to :controller => "contacts", :action => "show", :project_id => @project, :id => @duplicate
+        redirect_to :controller => 'contacts', :action => 'show', :project_id => @project, :id => @duplicate
       end
     rescue
-      redirect_to :action => "duplicates", :contact_id => @contact, :project_id => @project
+      redirect_to :action => 'duplicates', :contact_id => @contact, :project_id => @project
     end
-
   end
 
   def search

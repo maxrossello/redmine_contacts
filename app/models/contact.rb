@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -81,18 +81,18 @@ class Contact < ActiveRecord::Base
   delegate :street1, :street2, :city, :country, :country_code, :postcode, :region, :post_address, :to => :address, :allow_nil => true
 
   has_many :notes, :as => :source, :class_name => 'ContactNote', :dependent => :delete_all
-  has_many :addresses, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+  has_many :addresses, :dependent => :destroy, :as => :addressable, :class_name => 'Address'
   belongs_to :assigned_to, :class_name => 'User', :foreign_key => 'assigned_to_id'
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
 
   if ActiveRecord::VERSION::MAJOR >= 4
-    has_one :avatar, lambda { where("#{Attachment.table_name}.description = 'avatar'") }, :class_name => "Attachment", :as  => :container, :dependent => :destroy
-    has_one :address, lambda { where(:address_type => "business") }, :dependent => :destroy, :as => :addressable, :class_name => "Address"
-    has_and_belongs_to_many :projects, lambda { uniq }
-    has_and_belongs_to_many :issues, lambda { order("#{Issue.table_name}.due_date").uniq }
+    has_one :avatar, lambda { where("#{Attachment.table_name}.description = 'avatar'") }, :class_name => 'Attachment', :as => :container, :dependent => :destroy
+    has_one :address, lambda { where(:address_type => 'business') }, :dependent => :destroy, :as => :addressable, :class_name => 'Address'
+    has_and_belongs_to_many :projects, :uniq => true
+    has_and_belongs_to_many :issues, lambda { order("#{Issue.table_name}.due_date") }, :uniq => true
   else
-    has_one :avatar, :conditions => "#{Attachment.table_name}.description = 'avatar'", :class_name => "Attachment", :as  => :container, :dependent => :destroy
-    has_one :address, :conditions => {:address_type => "business"}, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+    has_one :avatar, :conditions => "#{Attachment.table_name}.description = 'avatar'", :class_name => 'Attachment', :as => :container, :dependent => :destroy
+    has_one :address, :conditions => { :address_type => 'business' }, :dependent => :destroy, :as => :addressable, :class_name => 'Address'
     has_and_belongs_to_many :projects, :uniq => true
     has_and_belongs_to_many :issues, :order => "#{Issue.table_name}.due_date", :uniq => true
   end
@@ -105,12 +105,11 @@ class Contact < ActiveRecord::Base
   acts_as_attachable :view_permission => :view_contacts,
                      :delete_permission => :edit_contacts
 
-
   acts_as_event :datetime => :created_on,
-                :url => lambda {|o| {:controller => 'contacts', :action => 'show', :id => o}},
+                :url => lambda { |o| { :controller => 'contacts', :action => 'show', :id => o } },
                 :type => 'icon icon-contact',
-                :title => lambda {|o| o.name },
-                :description => lambda {|o| [o.info, o.company, o.email, o.address, o.background].join(' ') }
+                :title => lambda { |o| o.name },
+                :description => lambda { |o| [o.info, o.company, o.email, o.address, o.background].join(' ') }
 
   if ActiveRecord::VERSION::MAJOR >= 4
     acts_as_activity_provider :type => 'contacts',
@@ -133,7 +132,7 @@ class Contact < ActiveRecord::Base
     acts_as_activity_provider :type => 'contacts',
                               :permission => :view_contacts,
                               :author_key => :author_id,
-                              :find_options => {:include => :projects}
+                              :find_options => { :include => :projects }
 
     acts_as_searchable :columns => ["#{table_name}.first_name",
                                     "#{table_name}.middle_name",
@@ -149,23 +148,23 @@ class Contact < ActiveRecord::Base
                        :order_column => "#{table_name}.id"
   end
 
-  accepts_nested_attributes_for :address, :allow_destroy => true, :update_only => true, :reject_if => proc {|attributes| Address.reject_address(attributes)}
+  accepts_nested_attributes_for :address, :allow_destroy => true, :update_only => true, :reject_if => proc { |attributes| Address.reject_address(attributes) }
 
-  scope :visible, lambda {|*args| eager_load(:projects).where(Contact.visible_condition(args.shift || User.current, *args)) }
-  scope :deletable, lambda {|*args| eager_load(:projects).where(Contact.deletable_condition(args.shift || User.current, *args)).readonly(false) }
-  scope :editable, lambda {|*args| eager_load(:projects).where(Contact.editable_condition(args.shift || User.current, *args)).readonly(false) }
-  scope :by_project, lambda {|prj| joins(:projects).where("#{Project.table_name}.id = ?", prj) unless prj.blank? }
-  scope :like_by, lambda {|field, search| {:conditions => ["LOWER(#{Contact.table_name}.#{field}) LIKE ?", search.downcase + "%"] }}
+  scope :visible, lambda { |*args| eager_load(:projects).where(Contact.visible_condition(args.shift || User.current, *args)) }
+  scope :deletable, lambda { |*args| eager_load(:projects).where(Contact.deletable_condition(args.shift || User.current, *args)).readonly(false) }
+  scope :editable, lambda { |*args| eager_load(:projects).where(Contact.editable_condition(args.shift || User.current, *args)).readonly(false) }
+  scope :by_project, lambda { |prj| joins(:projects).where("#{Project.table_name}.id = ?", prj) unless prj.blank? }
+  scope :like_by, lambda { |field, search| {:conditions => ["LOWER(#{Contact.table_name}.#{field}) LIKE ?", search.downcase + "%"] }}
   scope :companies, lambda { where(:is_company => true) }
   scope :people, lambda { where(:is_company => false) }
   scope :order_by_name, lambda { order(Contact.fields_for_order_statement) }
   scope :order_by_creation, lambda { order("#{Contact.table_name}.created_on DESC") }
 
-  scope :by_full_name, lambda {|search| where("LOWER(CONCAT(#{Contact.table_name}.first_name,' ',#{Contact.table_name}.last_name)) = ? ", search.downcase)}
-  scope :by_name, lambda {|search| where("(LOWER(#{Contact.table_name}.first_name) LIKE LOWER(:p) OR
+  scope :by_full_name, lambda { |search| where("LOWER(CONCAT(#{Contact.table_name}.first_name,' ',#{Contact.table_name}.last_name)) = ? ", search.downcase) }
+  scope :by_name, lambda { |search| where("(LOWER(#{Contact.table_name}.first_name) LIKE LOWER(:p) OR
                                                                   LOWER(#{Contact.table_name}.last_name) LIKE LOWER(:p) OR
                                                                   LOWER(#{Contact.table_name}.middle_name) LIKE LOWER(:p))",
-                                                                  {:p => "%" + search.downcase + "%"})}
+                                                                  { :p => '%' + search.downcase + '%' }) }
 
   scope :live_search, lambda {|search| where("(LOWER(#{Contact.table_name}.first_name) LIKE LOWER(:p) OR
                                                LOWER(#{Contact.table_name}.last_name) LIKE LOWER(:p) OR
@@ -174,7 +173,7 @@ class Contact < ActiveRecord::Base
                                                LOWER(#{Contact.table_name}.email) LIKE LOWER(:p) OR
                                                LOWER(#{Contact.table_name}.phone) LIKE LOWER(:p) OR
                                                LOWER(#{Contact.table_name}.job_title) LIKE LOWER(:p))",
-                                             {:p => "%" + search.downcase + "%"})}
+                                               { :p => '%' + search.downcase + '%' }) }
 
   validates_presence_of :first_name, :project
   validate :emails_format
@@ -184,27 +183,28 @@ class Contact < ActiveRecord::Base
   after_create :send_notification
   before_save :update_company_contacts
 
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
   safe_attributes 'is_company',
-    'first_name',
-    'last_name',
-    'middle_name',
-    'company',
-    'website',
-    'skype_name',
-    'birthday',
-    'job_title',
-    'background',
-    'author_id',
-    'assigned_to_id',
-    'phone',
-    'email',
-    'tag_list',
-    'visibility',
-    'watcher_user_ids',
-    'address_attributes'
+                  'first_name',
+                  'last_name',
+                  'middle_name',
+                  'company',
+                  'website',
+                  'skype_name',
+                  'birthday',
+                  'job_title',
+                  'background',
+                  'author_id',
+                  'assigned_to_id',
+                  'phone',
+                  'email',
+                  'tag_list',
+                  'project_ids',
+                  'visibility',
+                  'watcher_user_ids',
+                  'address_attributes'
 
-
-  def self.visible_condition(user, options={})
+  def self.visible_condition(user, options = {})
     user.reload
     user_ids = [user.id] + user.groups.map(&:id)
 
@@ -226,17 +226,15 @@ class Contact < ActiveRecord::Base
                 " AND (#{table_name}.author_id = #{user.id} OR #{table_name}.assigned_to_id IN (#{user_ids.join(',')}) )))"
       end
     end
-
-    cond << ")"
-
+    cond << ')'
   end
 
-  def self.editable_condition(user, options={})
-    self.visible_condition(user, options) + " AND (#{Project.allowed_to_condition(user, :edit_contacts)})"
+  def self.editable_condition(user, options = {})
+    visible_condition(user, options) + " AND (#{Project.allowed_to_condition(user, :edit_contacts)})"
   end
 
-  def self.deletable_condition(user, options={})
-    self.visible_condition(user, options) + " AND (#{Project.allowed_to_condition(user, :delete_contacts)})"
+  def self.deletable_condition(user, options = {})
+    visible_condition(user, options) + " AND (#{Project.allowed_to_condition(user, :delete_contacts)})"
   end
 
   def self.available_tags(options = {})
@@ -260,82 +258,86 @@ class Contact < ActiveRecord::Base
     scope
   end
 
-  def duplicates(limit=10)
+  def duplicates(limit = 10)
     scope = Contact.where({})
-    scope = scope.where("LOWER(first_name) LIKE LOWER(?)", "%#{ self.first_name.strip }%") if !self.first_name.blank?
-    scope = scope.where("LOWER(middle_name) LIKE LOWER(?)", "%#{ self.middle_name.strip }%") if !self.middle_name.blank?
-    scope = scope.where("LOWER(last_name) LIKE LOWER(?)", "%#{ self.last_name.strip }%") if !self.last_name.blank?
-    scope = scope.where("LOWER(email) LIKE LOWER(?)", "%#{ self.primary_email.strip }%") if !self.primary_email.blank?
-    scope = scope.where("#{Contact.table_name}.id <> ?", self.id) if !self.new_record?
-    @duplicates ||= (self.first_name.blank? && self.last_name.blank? && self.middle_name.blank?) ? [] : scope.visible.limit(limit)
+
+    cond = "((1=1) "
+    cond << "AND LOWER(#{Contact.table_name}.first_name) LIKE LOWER('#{first_name.strip}') " unless first_name.blank?
+    cond << "AND (LOWER(#{Contact.table_name}.middle_name) LIKE LOWER('#{middle_name.strip}') OR middle_name LIKE '') " unless middle_name.blank?
+    cond << "AND LOWER(#{Contact.table_name}.last_name) LIKE LOWER('#{last_name.strip}') " unless last_name.blank?
+    cond << " OR LOWER(#{Contact.table_name}.email) LIKE LOWER('#{primary_email.strip}') " unless primary_email.blank?
+    cond << ")"
+    cond << " AND #{Contact.table_name}.id <> #{id}" unless new_record?
+    scope = scope.where(cond)
+    @duplicates ||= (first_name.blank? && last_name.blank? && middle_name.blank?) ? [] : scope.visible.limit(limit)
   end
 
   def company_contacts
-    @contacts ||= Contact.order_by_name.includes(:avatar).where(["#{Contact.table_name}.is_company = ?  AND #{Contact.table_name}.company = ? AND #{Contact.table_name}.id <> ?", false, self.first_name, self.id])
+    @contacts ||= Contact.order_by_name.includes(:avatar).where(["#{Contact.table_name}.is_company = ?  AND #{Contact.table_name}.company = ? AND #{Contact.table_name}.id <> ?", false, first_name, id])
   end
+
   alias_method :employees, :company_contacts
 
   def redmine_user
     if ActiveRecord::VERSION::MAJOR >= 4
-      @redmine_user ||= User.joins(:email_address).where("LOWER(#{EmailAddress.table_name}.address) IN (?)", emails).first unless self.email.blank?
+      @redmine_user ||= User.joins(:email_address).where("LOWER(#{EmailAddress.table_name}.address) IN (?)", emails).first unless email.blank?
     else
-      @redmine_user ||= User.where(:mail => emails).first unless self.email.blank?
+      @redmine_user ||= User.where(:mail => emails).first unless email.blank?
     end
   end
 
   def contact_company
-    @contact_company ||= Contact.where(:first_name => self.company, :is_company => true).
-      where("#{Contact.table_name}.id <> #{self.id}").first unless self.company.blank?
+    @contact_company ||= Contact.where(:first_name => company, :is_company => true).
+                                 where("#{Contact.table_name}.id <> #{id.to_i}").first unless company.blank?
   end
 
   def notes_attachments
-    @contact_attachments ||= Attachment.where({ :container_type => "Note", :container_id => self.notes.map(&:id)}).order(:created_on)
+    @contact_attachments ||= Attachment.where(:container_type => 'Note', :container_id => notes.map(&:id)).order(:created_on)
   end
 
   # usr for mailer
-  def visible?(usr=nil)
+  def visible?(usr = nil)
     usr ||= User.current
-    if self.is_public?
+    if is_public?
       usr.allowed_to_globally?(:view_contacts, {})
     else
-      self.allowed_to?(usr || User.current, :view_contacts)
+      allowed_to?(usr || User.current, :view_contacts)
     end
   end
 
-  def editable?(usr=nil)
-    self.allowed_to?(usr || User.current, :edit_contacts)
+  def editable?(usr = nil)
+    allowed_to?(usr || User.current, :edit_contacts)
   end
 
-  def deletable?(usr=nil)
-    self.allowed_to?(usr || User.current, :delete_contacts)
+  def deletable?(usr = nil)
+    allowed_to?(usr || User.current, :delete_contacts)
   end
 
-  def allowed_to?(user, action, options={})
-    if self.is_private?
-      (self.projects.map{|p| user.allowed_to?(action, p)}.compact.any? && (self.author == user || user.is_or_belongs_to?(assigned_to))) ||
-        (self.projects.map{|p| user.allowed_to?(:view_private_contacts, p)}.compact.any? && self.projects.map{|p| user.allowed_to?(action, p)}.compact.any?)
+  def allowed_to?(user, action, options = {})
+    if is_private?
+      (projects.map { |p| user.allowed_to?(action, p) }.compact.any? && (author == user || user.is_or_belongs_to?(assigned_to))) ||
+        (projects.map { |p| user.allowed_to?(:view_private_contacts, p) }.compact.any? && projects.map { |p| user.allowed_to?(action, p) }.compact.any?)
     else
-      self.projects.map{|p| user.allowed_to?(action, p)}.compact.any?
+      projects.map { |p| user.allowed_to?(action, p) }.compact.any?
     end
   end
 
   def is_public?
-    self.visibility == VISIBILITY_PUBLIC
+    visibility == VISIBILITY_PUBLIC
   end
 
   def is_private?
-    self.visibility == VISIBILITY_PRIVATE
+    visibility == VISIBILITY_PRIVATE
   end
 
-
-  def send_mail_allowed?(usr=nil)
+  def send_mail_allowed?(usr = nil)
     usr ||= User.current
-    @send_mail_allowed ||= 0 < self.projects.visible(usr).where(Project.allowed_to_condition(usr, :send_contacts_mail)).count
+    @send_mail_allowed ||= 0 < projects.visible(usr).where(Project.allowed_to_condition(usr, :send_contacts_mail)).count
   end
 
   def self.projects_joins
     joins = []
-    joins << ["JOIN contacts_projects ON contacts_projects.contact_id = #{self.table_name}.id"]
+    joins << ["JOIN contacts_projects ON contacts_projects.contact_id = #{table_name}.id"]
     joins << ["JOIN #{Project.table_name} ON contacts_projects.project_id = #{Project.table_name}.id"]
   end
 
@@ -352,18 +354,17 @@ class Contact < ActiveRecord::Base
   end
 
   def project=(project)
-    self.projects << project
+    projects << project
   end
 
   def self.find_by_emails(emails)
-    contact = nil
-    cond = "(1 = 0)"
-    emails = emails.map{|e| e.downcase }
+    cond = '(1 = 0)'
+    emails = emails.map(&:downcase)
     emails.each do |mail|
       cond << " OR (LOWER(#{Contact.table_name}.email) LIKE LOWER('%#{mail.gsub("'", "").gsub("\"", "")}%'))"
     end
     contacts = Contact.where(cond)
-    contacts.select{|c| (c.emails.map{|e| e.downcase } & emails).any? }
+    contacts.select { |c| (c.emails.map(&:downcase) & emails).any? }
   end
 
   def self.name_formatter(formatter = nil)
@@ -376,14 +377,14 @@ class Contact < ActiveRecord::Base
   #
   #   Contact.fields_for_order_statement              => ['contacts.first_name', 'contacts.first_name', 'contacts.id']
   #   Contact.fields_for_order_statement('customers')   => ['customers.last_name', 'customers.id']
-  def self.fields_for_order_statement(table=nil)
+  def self.fields_for_order_statement(table = nil)
     table ||= table_name
-    name_formatter[:order].map {|field| "#{table}.#{field}"}
+    name_formatter[:order].map { |field| "#{table}.#{field}" }
   end
 
   # Return contacts's full name for display
   def name(formatter = nil)
-    unless self.is_company?
+    unless is_company?
       f = self.class.name_formatter(formatter)
       if formatter
         eval('"' + f[:string] + '"')
@@ -391,7 +392,7 @@ class Contact < ActiveRecord::Base
         @name ||= eval('"' + f[:string] + '"')
       end
     else
-      self.first_name
+      first_name
     end
   end
 
@@ -401,36 +402,36 @@ class Contact < ActiveRecord::Base
   end
 
   def info
-    self.job_title
+    job_title
   end
 
   def phones
-    @phones || self.phone ? self.phone.split( /, */) : []
+    @phones || phone ? phone.split(/, */) : []
   end
 
   def emails
-    @emails || self.email ? self.email.split( /, */).map{|m| m.strip} : []
+    @emails || email ? email.split(/, */).map { |m| m.strip } : []
   end
 
   def primary_email
-    self.emails.first
+    emails.first
   end
 
   def age
     return nil if birthday.blank?
     now = Time.now
-  # how many years?
-  # has their birthday occured this year yet?
-  # subtract 1 if so, 0 if not
-    age = now.year - birthday.year - (birthday.to_time.change(:year => now.year) > now ? 1 : 0)
+    # how many years?
+    # has their birthday occured this year yet?
+    # subtract 1 if so, 0 if not
+    now.year - birthday.year - (birthday.to_time.change(:year => now.year) > now ? 1 : 0)
   end
 
   def website_address
-    self.website.match("^https?://") ? self.website : self.website.gsub(/^/, "http://") unless self.website.blank?
+    website.match("^https?://") ? website : website.gsub(/^/, "http://") unless website.blank?
   end
 
   def to_s
-    self.name
+    name
   end
 
   def notified_users
@@ -448,10 +449,10 @@ class Contact < ActiveRecord::Base
       notified += contact_company.notified_users
     end
 
-    notified = notified.select {|u| u.active? }
+    notified = notified.select { |u| u.active? }
     notified.uniq!
     # Remove users that can not view the issue
-    notified.reject! {|user| !visible?(user)}
+    notified.reject! { |user| !visible?(user) }
     notified
   end
 
@@ -461,7 +462,7 @@ class Contact < ActiveRecord::Base
   end
 
   def all_watcher_recepients
-    notified = self.watcher_recipients
+    notified = watcher_recipients
     if !is_company && !contact_company.blank?
       notified += contact_company.watcher_recipients
     end
@@ -472,7 +473,7 @@ class Contact < ActiveRecord::Base
 
   def assign_phone
     if @phones
-      self.phone = @phones.uniq.map {|s| s.strip.delete(',').squeeze(" ")}.join(', ')
+      self.phone = @phones.uniq.map { |s| s.strip.delete(',').squeeze(' ') }.join(', ')
     end
   end
 
@@ -487,7 +488,7 @@ class Contact < ActiveRecord::Base
 
   def emails_format
     return unless email
-    validate_result = email.split(',').all? { |email| email.match(/\A([\w\.\+\-\!\#\$\%\&\/]+)@([\w\-]+\.)+([\w]{2,})\z/i).present? }
+    validate_result = email.split(',').all? { |email| email.match(/\A[^@]+@[^@]+\z/) }
     errors.add(:email, I18n.t(:text_crm_string_incorrect_format)) unless validate_result
   end
 

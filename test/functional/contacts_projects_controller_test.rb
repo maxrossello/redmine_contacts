@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -47,9 +47,6 @@ class ContactsProjectsControllerTest < ActionController::TestCase
 
   def setup
     RedmineContacts::TestCase.prepare
-    @controller = ContactsProjectsController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
     User.current = nil
   end
 
@@ -57,7 +54,7 @@ class ContactsProjectsControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
     contact = Contact.find(1)
     assert_equal 2, contact.projects.size
-    xhr :delete, :destroy, :project_id => 1, :id => 2, :contact_id => 1
+    compatible_xhr_request :delete, :destroy, :project_id => 1, :id => 2, :contact_id => 1
     assert_response :success
     assert_include 'contact_projects', response.body
 
@@ -69,10 +66,9 @@ class ContactsProjectsControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
     contact = Contact.find(1)
     assert RedmineContacts::TestCase.is_arrays_equal(contact.project_ids, [1, 2])
-    # assert_equal '12', "#{contact.project_ids} || #{contact.projects.map(&:name).join(', ')} #{Project.find(1).contacts.map(&:name).join(', ')},  #{Project.find(2).name}"
-    xhr :delete, :destroy, :project_id => 1, :id => 2, :contact_id => 1
+    compatible_xhr_request :delete, :destroy, :project_id => 1, :id => 2, :contact_id => 1
     assert_response :success
-    xhr :delete, :destroy, :project_id => 1, :id => 1, :contact_id => 1
+    compatible_xhr_request :delete, :destroy, :project_id => 1, :id => 1, :contact_id => 1
     assert_response 403
 
     contact.reload
@@ -82,7 +78,7 @@ class ContactsProjectsControllerTest < ActionController::TestCase
   def test_post_new
     @request.session[:user_id] = 1
 
-    xhr :post, :new, :project_id => "ecookbook", :id => 2, :contact_id => 2
+    compatible_xhr_request :post, :new, :project_id => 'ecookbook', :id => 2, :contact_id => 2
     assert_response :success
     assert_include 'contact_projects', response.body
     contact = Contact.find(2)
@@ -92,10 +88,7 @@ class ContactsProjectsControllerTest < ActionController::TestCase
   def test_post_create_without_permissions
     @request.session[:user_id] = 1
 
-    xhr :post, :create, :project_id => "project6", :id => 2, :contact_id => 2
+    compatible_xhr_request :post, :create, :project_id => 'project6', :id => 2, :contact_id => 2
     assert_response 403
   end
-
-
-
 end

@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 class ContactsTagsController < ApplicationController
   unloadable
-  before_filter :require_admin, :except => [:index]
-  before_filter :find_tag, :only => [:edit, :update]
-  before_filter :bulk_find_tags, :only => [:context_menu, :merge, :destroy]
+  before_action :require_admin, :except => [:index]
+  before_action :find_tag, :only => [:edit, :update]
+  before_action :bulk_find_tags, :only => [:context_menu, :merge, :destroy]
 
   accept_api_auth :index
 

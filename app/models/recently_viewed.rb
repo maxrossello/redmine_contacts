@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,7 +19,10 @@
 
 class RecentlyViewed < ActiveRecord::Base
   unloadable
-  attr_accessible :viewer
+  include Redmine::SafeAttributes
+
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
+  safe_attributes 'viewer'
 
   RECENTLY_VIEWED_LIMIT = 5
 

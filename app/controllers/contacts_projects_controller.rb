@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 class ContactsProjectsController < ApplicationController
   unloadable
 
-  before_filter :find_optional_project, :find_contact
-  before_filter :find_related_project, :only => [:destroy, :create]
-  before_filter :check_count, :only => :destroy
+  before_action :find_optional_project, :find_contact
+  before_action :find_related_project, :only => [:destroy, :create]
+  before_action :check_count, :only => :destroy
 
   accept_api_auth :create, :destroy
 

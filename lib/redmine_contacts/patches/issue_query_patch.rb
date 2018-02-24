@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -26,7 +26,6 @@ module RedmineContacts
         base.send(:include, InstanceMethods)
         base.send(:include, RedmineContacts::Helper)
       end
-
 
       module InstanceMethods
       end

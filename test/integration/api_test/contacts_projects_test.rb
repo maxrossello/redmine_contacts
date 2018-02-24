@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -60,38 +60,30 @@ class Redmine::ApiTest::NotesTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine:
     RedmineContacts::TestCase.prepare
   end
 
-  test "POST /contacts/:contact_id/projects.xml" do
-    parameters = {:project => {:id => 2}}
+  test 'POST /contacts/:contact_id/projects.xml' do
+    parameters = { :project => { :id => 2 } }
 
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:post,
-                                      '/contacts/1/projects.xml',
-                                      parameters,
-                                      {:success_code => :success})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:post, '/contacts/1/projects.xml', parameters, :success_code => :success)
     end
 
-    post '/contacts/1/projects.xml', parameters, credentials('admin')
+    compatible_api_request :post, '/contacts/1/projects.xml', parameters, credentials('admin')
     assert_response :success
     assert_not_nil Contact.find(1).projects.where(:id => 2)
   end
 
-  test "DELETE /contacts/:contact_id/projects.xml" do
+  test 'DELETE /contacts/:contact_id/projects.xml' do
     contact = Contact.find(1)
     contact.projects << Project.find(2)
     contact.save
 
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:delete,
-                                      '/contacts/1/projects/2.xml',
-                                      {},
-                                      {:success_code => :success})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:delete, '/contacts/1/projects/2.xml', {}, :success_code => :success)
     end
 
-    delete '/contacts/1/projects/2.xml', {}, credentials('admin')
+    compatible_api_request :delete, '/contacts/1/projects/2.xml', {}, credentials('admin')
     assert_response :success
     contact.reload
     assert_nil contact.projects.where(:id => 2).first
   end
-
-
 end

@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -22,14 +22,12 @@
 # encoding: utf-8
 require File.expand_path('../../test_helper', __FILE__)
 class QueriesControllerTest < ActionController::TestCase
-
   fixtures :projects, :enabled_modules,
            :users, :email_addresses,
            :members, :member_roles, :roles,
            :trackers, :issue_statuses, :issue_categories, :enumerations, :versions,
            :issues, :custom_fields, :custom_values,
            :queries
-
 
   def setup
     User.current = nil

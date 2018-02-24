@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -72,20 +72,19 @@ class MailerPatchTest < ActiveSupport::TestCase
   def test_crm_note_add
     note = Note.find(1)
     assert Mailer.crm_note_add(note).deliver
-    assert_match "Note 1", last_email.text_part.to_s
+    assert_match 'Note 1', last_email.text_part.to_s
   end
-
 
   def test_crm_note_add_to_company
     note = Note.find(4)
     assert Mailer.crm_note_add(note).deliver
-    assert_match "Note 4", last_email.text_part.to_s
+    assert_match 'Note 4', last_email.text_part.to_s
   end
 
   def test_crm_contact_add
     contact = Contact.find(1)
     assert Mailer.crm_contact_add(contact).deliver
-    assert_match "Contact #1: Ivan Ivanov", last_email.text_part.to_s
+    assert_match 'Contact #1: Ivan Ivanov', last_email.text_part.to_s
   end
 
   private
@@ -97,11 +96,10 @@ class MailerPatchTest < ActiveSupport::TestCase
   end
 
   def text_part
-    last_email.parts.detect {|part| part.content_type.include?('text/plain')}
+    last_email.parts.detect { |part| part.content_type.include?('text/plain') }
   end
 
   def html_part
-    last_email.parts.detect {|part| part.content_type.include?('text/html')}
+    last_email.parts.detect { |part| part.content_type.include?('text/html') }
   end
-
 end

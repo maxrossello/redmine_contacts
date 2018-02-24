@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -50,10 +50,11 @@ module RedmineContacts
           scope = Contact.includes(:avatar).where({})
           scope = scope.limit(params[:limit] || 10)
           scope = scope.companies if params[:is_company]
-          scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
-          q.split(' ').collect{ |search_string| scope = scope.live_search(search_string) } unless q.blank?
+          scope = scope.joins(:projects).where(Contact.visible_condition(User.current))
+          scope = Rails.version >= '5.1' ? scope.distinct : scope.uniq
+          q.split(' ').collect { |search_string| scope = scope.live_search(search_string) } unless q.blank?
           scope = scope.by_project(@project) if @project
-          @contacts = scope.to_a.sort!{|x, y| x.name <=> y.name }
+          @contacts = scope.to_a.sort! { |x, y| x.name <=> y.name }
           render :layout => false, :partial => 'contacts'
         end
 
@@ -70,7 +71,6 @@ module RedmineContacts
           end
           render :layout => false, :partial => 'companies'
         end
-
       end
     end
   end

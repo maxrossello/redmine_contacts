@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,6 +19,13 @@
 
 class ContactQuery < Query
   include CrmQuery
+
+  class QueryMultipleValuesColumn < QueryColumn
+    def value_object(object)
+      value = super
+      value.respond_to?(:to_a) ? value.to_a : value
+    end
+  end
 
   self.queried_class = Contact
   self.view_permission = :view_contacts if Redmine::VERSION.to_s >= '3.4' || RedmineContacts.unstable_branch?
@@ -40,7 +47,7 @@ class ContactQuery < Query
     QueryColumn.new(:region, :sortable => "#{Address.table_name}.region", :caption => :label_crm_region),
     QueryColumn.new(:postcode, :sortable => "#{Address.table_name}.postcode", :caption => :label_crm_postcode),
     QueryColumn.new(:country, :sortable => "#{Address.table_name}.country_code", :groupable => "#{Address.table_name}.country_code", :caption => :label_crm_country),
-    QueryColumn.new(:tags, :caption => :label_crm_tags_plural),
+    QueryMultipleValuesColumn.new(:tags, :caption => :label_crm_tags_plural),
     QueryColumn.new(:created_on, :sortable => "#{Contact.table_name}.created_on"),
     QueryColumn.new(:updated_on, :sortable => "#{Contact.table_name}.updated_on"),
     QueryColumn.new(:assigned_to, :sortable => lambda {User.fields_for_order_statement}, :groupable => true),
@@ -85,5 +92,4 @@ class ContactQuery < Query
   def query_includes
     [:address, :projects, :assigned_to]
   end
-
 end

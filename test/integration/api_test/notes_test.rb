@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -60,22 +60,17 @@ class Redmine::ApiTest::NotesTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine:
     RedmineContacts::TestCase.prepare
   end
 
-  test "POST /notes.xml" do
+  test 'POST /notes.xml' do
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:post,
-                                      '/notes.xml',
-                                      {:note => {:project_id => 1,
-                                                 :source_id => 1,
-                                                 :source_type => 'Contact',
-                                                 :content => 'API test'}},
-                                      {:success_code => :created})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:post, '/notes.xml', { :note => { :project_id => 1,
+                                                                                               :source_id => 1,
+                                                                                               :source_type => 'Contact',
+                                                                                               :content => 'API test' } },
+                                                                                  { :success_code => :created })
     end
 
     assert_difference('Note.count', 1) do
-      post '/notes.xml', {:note => {:content => 'API test'},
-                                    :project_id => 1,
-                                    :source_id => 1,
-                                    :source_type => 'Contact'}, credentials('admin')
+      compatible_api_request :post, '/notes.xml', { :note => { :content => 'API test' }, :project_id => 1, :source_id => 1, :source_type => 'Contact' }, credentials('admin')
     end
 
     note = Note.order('id DESC').first
@@ -83,46 +78,36 @@ class Redmine::ApiTest::NotesTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine:
 
     assert_response :created
     assert_equal 'application/xml', @response.content_type
-    assert_select 'note', :child => {:tag => 'id', :content => note.id.to_s}
+    assert_select 'note', :child => { :tag => 'id', :content => note.id.to_s }
   end
 
-
-  test "PUT /notes/1.xml" do
-    @parameters = {:note => {:content => 'API update'}}
+  test 'PUT /notes/1.xml' do
+    @parameters = { :note => { :content => 'API update' } }
 
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:put,
-                                    '/notes/1.xml',
-                                    @parameters,
-                                    {:success_code => :ok})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:put, '/notes/1.xml', @parameters, :success_code => :ok)
     end
 
     assert_no_difference('Note.count') do
-      put '/notes/1.xml', @parameters, credentials('admin')
+      compatible_api_request :put, '/notes/1.xml', @parameters, credentials('admin')
       assert_response :success
     end
 
     note = Note.where(:id => 1).first
-    assert_equal "API update", note.content
-
+    assert_equal 'API update', note.content
   end
 
-  test "DELETE /notes/1.xml" do
-    @parameters = {:note => {:content => 'API update'}}
+  test 'DELETE /notes/1.xml' do
+    @parameters = { :note => { :content => 'API update' } }
 
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:put,
-                                    '/notes/1.xml',
-                                    @parameters,
-                                    {:success_code => :ok})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:put, '/notes/1.xml', @parameters, :success_code => :ok)
     end
 
     assert_difference('Note.count', -1) do
-      delete '/notes/1.xml', @parameters, credentials('admin')
+      compatible_api_request :delete, '/notes/1.xml', @parameters, credentials('admin')
       assert_response :success
     end
     assert_nil Note.where(:id => 1).first
-
   end
-
 end

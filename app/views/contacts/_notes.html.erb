@@ -22,7 +22,8 @@
 </div>
 
 <% other_formats_links do |f| %>
-  <%= f.link_to 'Atom', :url => params.merge(:key => User.current.rss_key) %>
+  <% filtered_params = params.respond_to?(:to_unsafe_hash) ? params.to_unsafe_hash : params %>
+  <%= f.link_to 'Atom', :url => filtered_params.merge(:key => User.current.rss_key) %>
 <% end %>
 
 <% end %>

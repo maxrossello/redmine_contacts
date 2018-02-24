@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@ class NotesController < ApplicationController
   unloadable
   default_search_scope :notes
   # before_filter :find_model_object
-  before_filter :find_note, :only => [:show, :edit, :update, :destroy]
-  before_filter :find_project, :only => :create
-  before_filter :find_note_source, :only => :create
-  before_filter :find_optional_project, :only => :show
+  before_action :find_note, :only => [:show, :edit, :update, :destroy]
+  before_action :find_project, :only => :create
+  before_action :find_note_source, :only => :create
+  before_action :find_optional_project, :only => :show
 
   accept_api_auth :show, :create, :update, :destroy
 
@@ -50,13 +50,14 @@ class NotesController < ApplicationController
   end
 
   def update
-    if @note.update_attributes(params[:note])
+    @note.safe_attributes = params[:note]
+    if @note.save
       @note.note_time = params[:note][:note_time] if params[:note] && params[:note][:note_time]
       attachments = Attachment.attach_files(@note, (params[:attachments] || (params[:note] && params[:note][:uploads])))
       render_attachment_warning_if_needed(@note)
       flash[:notice] = l(:notice_successful_update)
       respond_to do |format|
-        format.html { redirect_back_or_default({:action => "show", :project_id => @note.source.project, :id => @note}) }
+        format.html { redirect_back_or_default({ :action => 'show', :project_id => @note.source.project, :id => @note }) }
         format.api  { render_api_ok }
       end
     else
@@ -68,7 +69,8 @@ class NotesController < ApplicationController
   end
 
   def create
-    @note = Note.new(params[:note])
+    @note = Note.new
+    @note.safe_attributes = params[:note]
     @note.source = @note_source
     @note.note_time = params[:note][:note_time] if params[:note] && params[:note][:note_time]
     @note.author = User.current
@@ -79,7 +81,7 @@ class NotesController < ApplicationController
       flash[:notice] = l(:notice_successful_create)
       respond_to do |format|
         format.js
-        format.html {redirect_to :back}
+        format.html { redirect_to :back }
         format.api  { render :action => 'show', :status => :created, :location => note_url(@note) }
       end
     else
@@ -95,13 +97,12 @@ class NotesController < ApplicationController
     @note.destroy
     respond_to do |format|
       format.js
-      format.html {redirect_to :action => 'show', :project_id => @project, :id => @note.source }
+      format.html { redirect_to :action => 'show', :project_id => @project, :id => @note.source }
       format.api  { render_api_ok }
     end
 
     # redirect_to :action => 'show', :project_id => @project, :id => @contact
   end
-
 
   private
 
@@ -126,5 +127,4 @@ class NotesController < ApplicationController
     klass = Object.const_get(note_source_type.camelcase)
     @note_source = klass.find(note_source_id)
   end
-
 end

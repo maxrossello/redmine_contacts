@@ -218,3 +218,30 @@ function uploadAvatar(element) {
   ajaxUpload(element.files[0], 0, fileSpan, element);
   return 0;
 }
+
+
+function initDealSelect2(id, url, placeholder) {
+    $(function () {
+        $('select#' + id).select2({
+            ajax: {
+                url: url,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { q: params.term };
+                },
+                processResults: function (data, params) {
+                    return { results: data };
+                },
+                cache: true
+            },
+            placeholder: placeholder,
+            allowClear: true,
+            minimumInputLength: 0,
+            width: '60%',
+            templateResult: function (option) {
+                return $('<span>' + option.avatar + '&nbsp;' + option.text + '</span>');
+            }
+        });
+    });
+};

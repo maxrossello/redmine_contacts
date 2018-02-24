@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -21,56 +21,53 @@
 
 module RedmineContacts
   module Helper
-
-    def contact_tag_url(tag_name, options={})
-      {:controller => 'contacts',
-       :action => 'index',
-       :set_filter => 1,
-       :project_id => @project,
-       :fields => [:tags],
-       :values => {:tags => [tag_name]},
-       :operators => {:tags => '='}}.merge(options)
+    def contact_tag_url(tag_name, options = {})
+      { :controller => 'contacts',
+        :action => 'index',
+        :set_filter => 1,
+        :project_id => @project,
+        :fields => [:tags],
+        :values => { :tags => [tag_name] },
+        :operators => { :tags => '=' } }.merge(options)
     end
 
-    def skype_to(skype_name, name = nil)
+    def skype_to(skype_name, _name = nil)
       return link_to skype_name, 'skype:' + skype_name + '?call' unless skype_name.blank?
     end
 
-    def tag_link(tag_name, options={})
-
-      style = ContactsSetting.monochrome_tags? ? {:class => "tag-label"} : {:class => "tag-label-color", :style => "background-color: #{tag_color(tag_name)}"}
+    def tag_link(tag_name, options = {})
+      style = ContactsSetting.monochrome_tags? ? { :class => 'tag-label' } : { :class => 'tag-label-color', :style => "background-color: #{tag_color(tag_name)}" }
       tag_count = options.delete(:count)
       link = link_to tag_name, contact_tag_url(tag_name), options
-      link = link + content_tag(:span, "(#{tag_count})", :class => 'tag-count') if tag_count
+      link += content_tag(:span, "(#{tag_count})", :class => 'tag-count') if tag_count
       content_tag(:span, link, {}.merge(style))
     end
 
     def tag_color(tag_name)
-      "##{"%06x" % (tag_name.unpack('H*').first.hex % 0xffffff)}"
+      "##{'%06x' % (tag_name.unpack('H*').first.hex % 0xffffff)}"
       # "##{"%06x" % (Digest::MD5.hexdigest(tag_name).hex % 0xffffff)}"
       # "##{"%06x" % (tag_name.hash % 0xffffff).to_s}"
     end
 
-    def tag_links(tag_list, options={})
-      content_tag(
-                :span,
-                safe_join(tag_list.map{|tag| tag_link(tag, options)}, ContactsSetting.monochrome_tags? ? ', ' : ' ').html_safe,
-                :class => "tag_list#{' icon icon-tag' if ContactsSetting.monochrome_tags?}" ) if tag_list
+    def tag_links(tag_list, options = {})
+      content_tag(:span, safe_join(tag_list.map { |tag| tag_link(tag, options) }, ContactsSetting.monochrome_tags? ? ', ' : ' ').html_safe,
+                         :class => "tag_list#{' icon icon-tag' if ContactsSetting.monochrome_tags?}") if tag_list
     end
 
     def contacts_for_select(project, options = {})
       scope = Contact.where(options[:where])
       scope = scope.limit(options[:limit] || 500)
       scope = scope.companies if options.delete(:is_company)
-      scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
+      scope = scope.joins(:projects)
+      scope = Rails.version >= '5.1' ? scope.distinct : scope.uniq
+      scope = scope.where(Contact.visible_condition(User.current))
       scope = scope.by_project(project) if project
-      scope.to_a.sort!{|x, y| x.name <=> y.name }.collect {|m| [options[:short_label] ? m.name : m.name_with_company, m.id.to_s]}
+      scope.to_a.sort! { |x, y| x.name <=> y.name }.collect { |m| [options[:short_label] ? m.name : m.name_with_company, m.id.to_s] }
     end
 
     def link_to_remote_list_update(text, url_params)
-      link_to_remote(text,
-        {:url => url_params, :method => :get, :update => 'contact_list', :complete => 'window.scrollTo(0,0)'},
-        {:href => url_for(:params => url_params)}
+      link_to_remote(text, { :url => url_params, :method => :get, :update => 'contact_list', :complete => 'window.scrollTo(0,0)' },
+                           { :href => url_for(:params => url_params) }
       )
     end
 
@@ -87,19 +84,19 @@ module RedmineContacts
       # return {:controller => note_source.class.name.pluralize.downcase, :action => 'show', :project_id => @project, :id => note_source.id }
     end
 
-    def link_to_source(note_source, options={})
-      return link_to note_source.name, note_source_url(note_source, options)
+    def link_to_source(note_source, options = {})
+      link_to note_source.name, note_source_url(note_source, options)
     end
 
-    def countries_options_for_select(selected=nil)
+    def countries_options_for_select(selected = nil)
       default_country = l(:label_crm_countries)[ContactsSetting.default_country.to_s.upcase.to_sym] if ContactsSetting.default_country
       countries = countries_for_select
-      countries = [[default_country, ContactsSetting.default_country.to_s.upcase], ["---", ""]] | countries if default_country
-      options_for_select(countries, :disabled => "", :selected => selected)
+      countries = [[default_country, ContactsSetting.default_country.to_s.upcase], ['---', '']] | countries if default_country
+      options_for_select(countries, :disabled => '', :selected => selected)
     end
 
     def countries_for_select
-      l(:label_crm_countries).map{|k, v| [v, k.to_s]}.sort
+      l(:label_crm_countries).map { |k, v| [v, k.to_s] }.sort
     end
 
     def select_contact_tag(name, contact, options={})
@@ -151,42 +148,48 @@ module RedmineContacts
       s.html_safe
     end
 
-    def avatar_to(obj, options = { })
+    # TODO: Need to add tests for this method (avatar_to).
+    def avatar_to(obj, options = {})
       # "https://avt.appsmail.ru/mail/sin23matvey/_avatar"
 
-      options[:size] ||= "64"
-      options[:width] ||= options[:size]
-      options[:height] ||= options[:size]
-      options[:size] = "#{options[:width]}x#{options[:height]}" if ActiveRecord::VERSION::MAJOR >= 4
-      options.merge!({:class => "gravatar"})
+      options[:size] ||= '64'
+      if ActiveRecord::VERSION::MAJOR >= 4
+        unless options[:size].to_s.include?('x')
+          options[:size] = "#{options[:size]}x#{options[:size]}"
+        end
+      else
+        options[:width] ||= options[:size]
+        options[:height] ||= options[:size]
+      end
 
-      obj_icon = obj.is_a?(Contact) ? (obj.is_company ? "company.png" : "person.png") : (obj.is_a?(Deal) ? "deal.png" : "unknown.png")
+      options[:class] = 'gravatar'
 
-      return image_tag(obj_icon, options.merge({:plugin => "redmine_contacts"})) if ENV["NO_AVATAR"]
+      obj_icon = obj.is_a?(Contact) ? (obj.is_company ? 'company.png' : 'person.png') : (obj.is_a?(Deal) ? 'deal.png' : 'unknown.png')
+
+      return image_tag(obj_icon, options.merge(:plugin => 'redmine_contacts')) if ENV['NO_AVATAR']
 
       if obj.is_a?(Deal)
         if obj.contact
           avatar_to(obj.contact, options)
         else
-          image_tag(obj_icon, options.merge({:plugin => "redmine_contacts"}))
+          image_tag(obj_icon, options.merge(:plugin => 'redmine_contacts'))
         end
       elsif obj.is_a?(Contact) && (avatar = obj.avatar) && avatar.readable?
-        avatar_url = url_for :controller => "attachments", :action => "contacts_thumbnail", :id => avatar, :size => options[:size]
+        avatar_url = url_for :controller => 'attachments', :action => 'contacts_thumbnail', :id => avatar, :size => options[:size]
         if options[:full_size]
-          link_to(image_tag(avatar_url, options), :controller => 'attachments', :action => 'download', :id => avatar, :filename => avatar.filename)
+          link_to(image_tag(avatar_url, options), :controller => 'attachments', :action => 'show', :id => avatar, :filename => avatar.filename)
         else
           image_tag(avatar_url, options)
         end
-      elsif obj.respond_to?(:facebook) &&  !obj.facebook.blank?
-        image_tag("https://graph.facebook.com/#{obj.facebook.gsub('.*facebook.com\/','')}/picture?type=square#{'&return_ssl_resources=1' if (request && request.ssl?)}", options)
+      elsif obj.respond_to?(:facebook) && !obj.facebook.blank?
+        image_tag("https://graph.facebook.com/#{obj.facebook.gsub('.*facebook.com\/', '')}/picture?type=square#{'&return_ssl_resources=1' if (request && request.ssl?)}", options)
       elsif Setting.gravatar_enabled? && obj.is_a?(Contact) && obj.primary_email
         # options.merge!({:ssl => (request && request.ssl?), :default => "#{request.protocol}#{request.host_with_port}/plugin_assets/redmine_contacts/images/#{obj_icon}"})
         # gravatar(obj.primary_email.downcase, options) rescue image_tag(obj_icon, options.merge({:plugin => "redmine_contacts"}))
         avatar("<#{obj.primary_email}>", options)
       else
-        image_tag(obj_icon, options.merge({:plugin => "redmine_contacts"}))
+        image_tag(obj_icon, options.merge(:plugin => 'redmine_contacts'))
       end
-
     end
 
     def contact_tag(contact, options={})
@@ -200,52 +203,52 @@ module RedmineContacts
       end
 
       case options.delete(:type).to_s
-      when "avatar"
+      when 'avatar'
         contact_avatar.html_safe
-      when "plain"
+      when 'plain'
         contact_name.html_safe
       else
-        content_tag(:span, "#{contact_avatar} #{contact_name}".html_safe, :class => "contact")
+        content_tag(:span, "#{contact_avatar} #{contact_name}".html_safe, :class => 'contact')
       end
     end
 
-    def render_contact_tooltip(contact, options={})
+    def render_contact_tooltip(contact, options = {})
       @cached_label_crm_company ||= l(:field_contact_company)
       @cached_label_job_title = contact.is_company ? l(:field_company_field) : l(:field_contact_job_title)
       @cached_label_phone ||= l(:field_contact_phone)
       @cached_label_email ||= l(:field_contact_email)
 
-      emails = contact.emails.any? ? contact.emails.map{|email| "<span class=\"email\" style=\"white-space: nowrap;\">#{mail_to email}</span>"}.join(', ') : ''
-      phones = contact.phones.any? ? contact.phones.map{|phone| "<span class=\"phone\" style=\"white-space: nowrap;\">#{phone}</span>"}.join(', ') : ''
+      emails = contact.emails.any? ? contact.emails.map { |email| "<span class=\"email\" style=\"white-space: nowrap;\">#{mail_to email}</span>" }.join(', ') : ''
+      phones = contact.phones.any? ? contact.phones.map { |phone| "<span class=\"phone\" style=\"white-space: nowrap;\">#{phone}</span>" }.join(', ') : ''
 
-      s = link_to_contact(contact, options) + "<br /><br />".html_safe
+      s = link_to_contact(contact, options) + '<br /><br />'.html_safe
       s <<  "<strong>#{@cached_label_job_title}</strong>: #{contact.job_title}<br />".html_safe unless contact.job_title.blank?
-      s <<  "<strong>#{@cached_label_crm_company}</strong>: #{link_to(contact.contact_company.name, {:controller => 'contacts', :action => 'show', :id => contact.contact_company.id })}<br />".html_safe if !contact.contact_company.blank? && !contact.is_company
+      s <<  "<strong>#{@cached_label_crm_company}</strong>: #{link_to(contact.contact_company.name, { :controller => 'contacts', :action => 'show', :id => contact.contact_company.id })}<br />".html_safe if !contact.contact_company.blank? && !contact.is_company
       s <<  "<strong>#{@cached_label_email}</strong>: #{emails}<br />".html_safe if contact.emails.any?
       s <<  "<strong>#{@cached_label_phone}</strong>: #{phones}<br />".html_safe if contact.phones.any?
       s
     end
 
-    def link_to_contact(contact, options={})
+    def link_to_contact(contact, options = {})
       s = ''
       html_options = {}
-      html_options = {:class => 'icon icon-vcard'} if options[:icon] == true
-      s << avatar_to(contact, :size => "16") if options[:avatar] == true
-   		s << link_to_source(contact, html_options)
+      html_options = { :class => 'icon icon-vcard' } if options[:icon] == true
+      s << avatar_to(contact, :size => '16') if options[:avatar] == true
+      s << link_to_source(contact, html_options)
 
-   		s << "(#{contact.job_title}) " if (options[:job_title] == true) && !contact.job_title.blank?
-  		s << " #{l(:label_crm_at_company)} " if (options[:job_title] == true) && !(contact.job_title.blank? or contact.company.blank?)
-  		if (options[:company] == true) and contact.contact_company
-  			s << link_to(contact.contact_company.name, {:controller => 'contacts', :action => 'show', :id => contact.contact_company.id })
-  		else
-  			h contact.company
-  		end
-   		s << "(#{l(:field_contact_tag_names)}: #{contact.tag_list.join(', ')}) " if (options[:tag_list] == true) && !contact.tag_list.blank?
+      s << "(#{contact.job_title}) " if (options[:job_title] == true) && !contact.job_title.blank?
+      s << " #{l(:label_crm_at_company)} " if (options[:job_title] == true) && !(contact.job_title.blank? || contact.company.blank?)
+      if (options[:company] == true) && contact.contact_company
+        s << link_to(contact.contact_company.name, { :controller => 'contacts', :action => 'show', :id => contact.contact_company.id })
+      else
+        h contact.company
+      end
+      s << "(#{l(:field_contact_tag_names)}: #{contact.tag_list.join(', ')}) " if (options[:tag_list] == true) && !contact.tag_list.blank?
       s.html_safe
     end
 
     def tagsedit_with_source_for(field_id, url)
-      s = ""
+      s = ''
       unless @heads_for_tagsedit_included
         s << javascript_include_tag(:"tag-it", :plugin => 'redmine_contacts')
         s << stylesheet_link_tag(:"jquery.tagit.css", :plugin => 'redmine_contacts')
@@ -271,7 +274,7 @@ module RedmineContacts
     end
 
     def tagsedit_for(field_id, available_tags='')
-      s = ""
+      s = ''
       unless @heads_for_tagsedit_included
         s << javascript_include_tag(:"tag-it", :plugin => 'redmine_contacts')
         s << stylesheet_link_tag(:"jquery.tagit.css", :plugin => 'redmine_contacts')
@@ -292,13 +295,13 @@ module RedmineContacts
       note_type_tag = ''
       case note.type_id
       when 0
-        note_type_tag = content_tag('span', '', :class => "icon icon-email", :title => l(:label_crm_note_type_email))
+        note_type_tag = content_tag('span', '', :class => 'icon icon-email', :title => l(:label_crm_note_type_email))
       when 1
-        note_type_tag = content_tag('span', '', :class => "icon icon-call", :title => l(:label_crm_note_type_call))
+        note_type_tag = content_tag('span', '', :class => 'icon icon-call', :title => l(:label_crm_note_type_call))
       when 2
-        note_type_tag = content_tag('span', '', :class => "icon icon-meeting", :title => l(:label_crm_note_type_meeting))
+        note_type_tag = content_tag('span', '', :class => 'icon icon-meeting', :title => l(:label_crm_note_type_meeting))
       end
-      context = {:type_tag => note_type_tag, :type_id => note.type_id}
+      context = { :type_tag => note_type_tag, :type_id => note.type_id }
       call_hook(:helper_notes_note_type_tag, context)
       context[:type_tag].html_safe
     end

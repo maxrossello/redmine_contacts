@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ class Redmine::ApiTest::ContactsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmi
                                                                                                                     :contacts_issues,
                                                                                                                     :deals,
                                                                                                                     :notes,
-                                                                                                                     :tags,
+                                                                                                                    :tags,
                                                                                                                     :taggings,
                                                                                                                     :queries])
 
@@ -63,25 +63,22 @@ class Redmine::ApiTest::ContactsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmi
   def test_get_contacts_xml
     # Use a private project to make sure auth is really working and not just
     # only showing public issues.
-    Redmine::ApiTest::Base.should_allow_api_authentication(:get, "/projects/private-child/contacts.xml") if ActiveRecord::VERSION::MAJOR < 4
+    Redmine::ApiTest::Base.should_allow_api_authentication(:get, '/projects/private-child/contacts.xml') if ActiveRecord::VERSION::MAJOR < 4
 
-    get '/contacts.xml', {}, credentials('admin')
+    compatible_api_request :get, '/contacts.xml', {}, credentials('admin')
 
-    att = { :type => 'array', :total_count => assigns(:contacts_count), :limit => 25, :offset => 0 }
+    att = { :type => 'array', :total_count => 5, :limit => 25, :offset => 0 }
     assert_select 'contacts', :attributes => att
   end
 
-
   def test_post_contacts_xml
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:post,
-                                      '/contacts.xml',
-                                      {:contact => {:project_id => 1, :first_name => 'API test'}},
-                                      {:success_code => :created})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:post, '/contacts.xml', { :contact => { :project_id => 1, :first_name => 'API test' } },
+                                                                                     { :success_code => :created })
     end
 
     assert_difference('Contact.count') do
-      post '/contacts.xml', {:contact => {:project_id => 1, :first_name => 'API test'}}, credentials('admin')
+      compatible_api_request :post, '/contacts.xml', { :contact => { :project_id => 1, :first_name => 'API test' } }, credentials('admin')
     end
 
     contact = Contact.order('id DESC').first
@@ -89,19 +86,17 @@ class Redmine::ApiTest::ContactsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmi
 
     assert_response :created
     assert_equal 'application/xml', @response.content_type
-    assert_select 'contact', :child => {:tag => 'id', :content => contact.id.to_s}
+    assert_select 'contact', :child => { :tag => 'id', :content => contact.id.to_s }
   end
 
   def test_post_contacts_xml_redirect
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:post,
-                                      '/contacts.xml',
-                                      {:contact => {:project_id => 1, :first_name => 'API test'}},
-                                      {:success_code => :created})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:post, '/contacts.xml', { :contact => { :project_id => 1, :first_name => 'API test' } },
+                                                                                     { :success_code => :created })
     end
 
     assert_difference('Contact.count') do
-      post '/contacts.xml', {:contact => {:project_id => 1, :first_name => 'API test'}, :redirect_on_success => 'http://ya.ru'}, credentials('admin')
+      compatible_api_request :post, '/contacts.xml', { :contact => { :project_id => 1, :first_name => 'API test' }, :redirect_on_success => 'http://ya.ru' }, credentials('admin')
     end
 
     assert_redirected_to 'http://ya.ru'
@@ -109,22 +104,18 @@ class Redmine::ApiTest::ContactsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmi
 
   # Issue 6 is on a private project
   def test_put_contacts_1_xml
-    parameters = {:contact => {:first_name => 'API update'}}
+    parameters = { :contact => { :first_name => 'API update' } }
 
     if ActiveRecord::VERSION::MAJOR < 4
-      Redmine::ApiTest::Base.should_allow_api_authentication(:put,
-                                    '/contacts/1.xml',
-                                    {:contact => {:first_name => 'API update'}},
-                                    {:success_code => :ok})
+      Redmine::ApiTest::Base.should_allow_api_authentication(:put, '/contacts/1.xml', { :contact => { :first_name => 'API update' } },
+                                                                                      { :success_code => :ok })
     end
 
     assert_no_difference('Contact.count') do
-      put '/contacts/1.xml', parameters, credentials('admin')
+      compatible_api_request :put, '/contacts/1.xml', parameters, credentials('admin')
     end
 
     contact = Contact.where(:id => 1).first
-    assert_equal "API update", contact.first_name
-
+    assert_equal 'API update', contact.first_name
   end
-
 end

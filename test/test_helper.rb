@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -28,12 +28,42 @@ end
 # Engines::Testing.set_fixture_path
 module RedmineContacts
   module TestHelper
+    def compatible_request(type, action, parameters = {})
+      return send(type, action, :params => parameters) if Rails.version >= '5.1'
+      send(type, action, parameters)
+    end
+
+    def compatible_xhr_request(type, action, parameters = {})
+      return send(type, action, :params => parameters, :xhr => true) if Rails.version >= '5.1'
+      xhr type, action, parameters
+    end
+
+    def compatible_api_request(type, action, parameters = {}, headers = {})
+      return send(type, action, :params => parameters, :headers => headers) if Rails.version >= '5.1'
+      send(type, action, parameters, headers)
+    end
+
+    def issues_in_list
+      ids = css_select('tr.issue td.id').map{ |tag| tag['text'].to_i }
+      Issue.where(:id => ids).sort_by { |issue| ids.index(issue.id) }
+    end
+
+    def contacts_in_list
+      ids = css_select('table.contacts #selected_contacts_').map { |tag| tag['value'].to_i }
+      Contact.where(:id => ids).sort_by { |contact| ids.index(contact.id) }
+    end
+
+    def deals_in_list
+      ids = css_select('.deal_list #ids_').map { |tag| tag['value'].to_i }
+      Deal.where(:id => ids).sort_by { |contact| ids.index(contact.id) }
+    end
+
     def with_contacts_settings(options, &block)
       Setting.plugin_redmine_contacts.stubs(:[]).returns(nil)
       options.each { |k, v| Setting.plugin_redmine_contacts.stubs(:[]).with(k).returns(v) }
       yield
     ensure
-      options.each { |k, v| Setting.plugin_redmine_contacts.unstub(:[]) }
+      options.each { |_k, _v| Setting.plugin_redmine_contacts.unstub(:[]) }
     end
   end
 end
@@ -71,7 +101,6 @@ class RedmineContacts::TestCase
   def self.prepare
     # User 2 Manager (role 1) in project 1, email jsmith@somenet.foo
     # User 3 Developer (role 2) in project 1
-
 
     Role.where(:id => [1, 2, 3, 4]).each do |r|
       r.permissions << :view_contacts
@@ -116,5 +145,6 @@ class RedmineContacts::TestCase
       EnabledModule.create(:project => project, :name => 'deals')
     end
   end
-
 end
+
+include RedmineContacts::TestHelper

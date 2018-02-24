@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -18,8 +18,13 @@
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
 class Address < ActiveRecord::Base
+  include Redmine::SafeAttributes
+
   attr_reader :country
-  attr_accessible :street1, :street2, :region, :city, :country_code, :postcode, :full_address, :address_type, :addressable if ActiveRecord::VERSION::MAJOR >= 4
+
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
+  safe_attributes 'street1', 'street2', 'region', 'city', 'country_code', 'postcode',
+                  'full_address', 'address_type', 'addressable'
 
   belongs_to :addressable, :polymorphic => true
 
@@ -45,13 +50,13 @@ class Address < ActiveRecord::Base
   #   accepts_nested_attributes_for :business_address, :allow_destroy => true, :reject_if => proc {|attributes| Address.reject_address(attributes)}
   def self.reject_address(attributes)
     exists = attributes['id'].present?
-    empty = %w(street1 street2 city region postcode country_code full_address).map{|name| attributes[name].blank?}.all?
-    attributes.merge!({:_destroy => 1}) if exists and empty
-    return (!exists and empty)
+    empty = %w(street1 street2 city region postcode country_code full_address).map { |name| attributes[name].blank? }.all?
+    attributes[:_destroy] = 1 if exists && empty
+    !exists && empty
   end
 
   def to_s
-    %w(street1 street2 city postcode region country).map{ |attr| self.send(attr) }.select{|a| !a.blank? }.join(', ')
+    %w(street1 street2 city postcode region country).map { |attr| send(attr) }.select { |a| !a.blank? }.join(', ')
   end
 
   def post_address
@@ -71,7 +76,6 @@ class Address < ActiveRecord::Base
   private
 
   def populate_full_address
-    self.full_address =  self.to_s
+    self.full_address = self.to_s
   end
-
 end

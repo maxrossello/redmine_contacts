@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -25,26 +25,24 @@ module RedmineContacts
         base.class_eval do
           unloadable
           class << self
-              alias_method_chain :all, :crm
+            alias_method :all_without_contacts, :all
+            alias_method :all, :all_with_contacts
           end
         end
       end
 
-
       module ClassMethods
         # include ContactsHelper
 
-        def all_with_crm
-          notifications = all_without_crm
+        def all_with_contacts
+          notifications = all_without_contacts
           notifications << Redmine::Notifiable.new('crm_contact_added')
           notifications << Redmine::Notifiable.new('crm_deal_added')
           notifications << Redmine::Notifiable.new('crm_deal_updated')
           notifications << Redmine::Notifiable.new('crm_note_added')
           notifications
         end
-
       end
-
     end
   end
 end

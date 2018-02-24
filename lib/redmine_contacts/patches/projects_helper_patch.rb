@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@ module RedmineContacts
 
         base.class_eval do
           unloadable
-
-          alias_method_chain :project_settings_tabs, :contacts
+          alias_method :project_settings_tabs_without_contacts, :project_settings_tabs
+          alias_method :project_settings_tabs, :project_settings_tabs_with_contacts
         end
       end
 
@@ -38,15 +38,13 @@ module RedmineContacts
         def project_settings_tabs_with_contacts
           tabs = project_settings_tabs_without_contacts
 
-          tabs.push({ :name => 'contacts',
-            :action => :manage_contacts,
-            :partial => 'projects/contacts_settings',
-            :label => :label_contact_plural }) if User.current.allowed_to?(:manage_contacts, @project)
+          tabs.push(:name => 'contacts',
+                    :action => :manage_contacts,
+                    :partial => 'projects/contacts_settings',
+                    :label => :label_contact_plural) if User.current.allowed_to?(:manage_contacts, @project)
           tabs
-
         end
       end
-
     end
   end
 end

@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -18,11 +18,10 @@
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
 class CrmQueriesController < ApplicationController
-
-  before_filter :find_query_class
-  before_filter :find_query, :except => [:new, :create, :index]
-  before_filter :find_optional_project, :only => [:new, :create]
-  before_filter :set_menu_item
+  before_action :find_query_class
+  before_action :find_query, :except => [:new, :create, :index]
+  before_action :find_optional_project, :only => [:new, :create]
+  before_action :set_menu_item
 
   accept_api_auth :index
 
@@ -57,12 +56,12 @@ class CrmQueriesController < ApplicationController
   end
 
   def create
-    @query = @query_class.new(params[:query])
+    @query = @query_class.new(params_hash[:query])
     @query.user = User.current
-    @query.project = params[:query_is_for_all] ? nil : @project
+    @query.project = params_hash[:query_is_for_all] ? nil : @project
     @query.visibility = @query_class::VISIBILITY_PRIVATE unless User.current.allowed_to?("manage_public_#{@object_type}s_queries".to_sym, @project) || User.current.admin?
-    @query.build_from_params(params)
-    @query.column_names = nil if params[:default_columns]
+    @query.build_from_params(params_hash)
+    @query.column_names = nil if params_hash[:default_columns]
 
     if @query.save
       flash[:notice] = l(:notice_successful_create)
@@ -76,11 +75,11 @@ class CrmQueriesController < ApplicationController
   end
 
   def update
-    @query.attributes = params[:query]
-    @query.project = nil if params[:query_is_for_all]
+    @query.attributes = params_hash[:query]
+    @query.project = nil if params_hash[:query_is_for_all]
     @query.visibility = @query_class::VISIBILITY_PRIVATE unless User.current.allowed_to?("manage_public_#{@object_type}s_queries".to_sym, @project) || User.current.admin?
-    @query.build_from_params(params)
-    @query.column_names = nil if params[:default_columns]
+    @query.build_from_params(params_hash)
+    @query.column_names = nil if params_hash[:default_columns]
 
     if @query.save
       flash[:notice] = l(:notice_successful_update)
@@ -126,5 +125,9 @@ private
 
   def set_menu_item
     menu_items[:project_tabs][:actions][action_name.to_sym] = "#{@object_type}s"
+  end
+
+  def params_hash
+    @params_hash ||= params.respond_to?(:to_unsafe_hash) ? params.to_unsafe_hash.symbolize_keys : params
   end
 end

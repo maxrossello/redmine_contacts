@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -57,63 +57,56 @@ class ContactsTagsControllerTest < ActionController::TestCase
 
   def setup
     RedmineContacts::TestCase.prepare
-
-    @controller = ContactsTagsController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
     User.current = nil
-
     @request.env['HTTP_REFERER'] = '/'
   end
 
-  test "should get edit" do
+  def test_should_get_edit
     @request.session[:user_id] = 1
-    get :edit, :id => 1
+    compatible_request :get, :edit, :id => 1
     assert_response :success
-    assert_template 'edit'
-    assert_not_nil assigns(:tag)
-    assert_equal RedmineCrm::Tag.find(1), assigns(:tag)
+    assigned_tag = css_select('#tag_name').map { |tag| tag['value'] }.join
+    assert_not_nil assigned_tag
+    assert_equal RedmineCrm::Tag.find(1).name, assigned_tag
   end
 
-  test "should put update" do
+  def test_should_put_update
     @request.session[:user_id] = 1
     tag1 = RedmineCrm::Tag.find(1)
-    old_name = tag1.name
-    new_name = "updated main"
-    put :update, :id => 1, :tag => {:name => new_name, :color_name=>"#000000"}
-    assert_redirected_to :controller => 'settings', :action => 'plugin', :id => "redmine_contacts", :tab => "tags"
+    new_name = 'updated main'
+    compatible_request :put, :update, :id => 1, :tag => { :name => new_name, :color_name => '#000000' }
+    assert_redirected_to :controller => 'settings', :action => 'plugin', :id => 'redmine_contacts', :tab => 'tags'
     tag1.reload
     assert_equal new_name, tag1.name
   end
 
-  test "should delete destroy" do
+  def test_should_delete_destroy
     @request.session[:user_id] = 1
     assert_difference 'RedmineCrm::Tag.count', -1 do
-      post :destroy, :id => 1
+      compatible_request :post, :destroy, :id => 1
       assert_response 302
     end
   end
 
-  test "should get merge" do
+  def test_should_get_merge
     @request.session[:user_id] = 1
     tag1 = RedmineCrm::Tag.find(1)
     tag2 = RedmineCrm::Tag.find(2)
-    get :merge, :ids => [tag1.id, tag2.id]
+    compatible_request :get, :merge, :ids => [tag1.id, tag2.id]
     assert_response :success
-    assert_template 'merge'
-    assert_not_nil assigns(:tags)
+    merged_tags = css_select('.tag_list a').map { |tag| tag.to_s.to_s[/.*>(.+?)<\/a>/, 1] }
+    assert_equal 2, merged_tags.size
   end
 
-  test "should post merge" do
+  def test_should_post_merge
     @request.session[:user_id] = 1
     tag1 = RedmineCrm::Tag.find(1)
     tag2 = RedmineCrm::Tag.find(2)
     assert_difference 'RedmineCrm::Tag.count', -1 do
-      post :merge, :ids => [tag1.id, tag2.id], :tag => {:name => "main"}
-      assert_redirected_to :controller => 'settings', :action => 'plugin', :id => "redmine_contacts", :tab => "tags"
+      compatible_request :post, :merge, :ids => [tag1.id, tag2.id], :tag => { :name => 'main' }
+      assert_redirected_to :controller => 'settings', :action => 'plugin', :id => 'redmine_contacts', :tab => 'tags'
     end
-    assert_equal 0, Contact.tagged_with("test").count
-    assert_equal 4, Contact.tagged_with("main").count #added one more tagging for tag2
+    assert_equal 0, Contact.tagged_with('test').count
+    assert_equal 4, Contact.tagged_with('main').count # added one more tagging for tag2
   end
-
 end

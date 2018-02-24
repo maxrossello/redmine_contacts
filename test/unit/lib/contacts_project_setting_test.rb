@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@
 
 # encoding: utf-8
 require File.expand_path('../../../test_helper', __FILE__)
-
 
 class ContactsProjectSettingTest < ActiveSupport::TestCase
   fixtures :projects,
@@ -59,26 +58,25 @@ class ContactsProjectSettingTest < ActiveSupport::TestCase
                                                                                                                     :queries])
 
   def setup
-    Setting.plugin_redmine_contacts["post_address_format"] = nil
-    @project_settings = ContactsProjectSetting.new(Project.find(1), "redmine_contacts")
+    Setting.plugin_redmine_contacts['post_address_format'] = nil
+    @project_settings = ContactsProjectSetting.new(Project.find(1), 'redmine_contacts')
   end
 
   def test_read_values
-    assert_equal "String value", @project_settings.string_setting
+    assert_equal 'String value', @project_settings.string_setting
     assert_equal true, @project_settings.boolean_setting?
   end
 
   def test_read_global_values
-    Setting["plugin_redmine_contacts"]["global_value"] = "Global"
-    assert_equal "Global", @project_settings.global_value
+    Setting['plugin_redmine_contacts']['global_value'] = 'Global'
+    assert_equal 'Global', @project_settings.global_value
   end
 
   def test_read_default_values
-    assert_equal ["USD", "EUR", "GBP", "RUB", "CHF"].sort, @project_settings.major_currencies.sort
+    assert_equal ['USD', 'EUR', 'GBP', 'RUB', 'CHF'].sort, @project_settings.major_currencies.sort
   end
 
   def test_read_default_values_post_address_format
     assert_equal "%street1%\n%street2%\n%city%, %postcode%\n%region%\n%country%", @project_settings.post_address_format
   end
-
 end

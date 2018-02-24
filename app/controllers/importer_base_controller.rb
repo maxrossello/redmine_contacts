@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@ class ImporterBaseController < ApplicationController
   unloadable
   if Redmine::VERSION.to_s >= '3.2'
     helper :imports
-    before_filter :find_import, :only => [:show, :settings, :mapping, :run]
+    before_action :find_import, :only => [:show, :settings, :mapping, :run]
   end
-  before_filter :find_project_by_project_id, :authorize
+
+  before_action :find_project_by_project_id, :authorize
 
   def new
     @importer = klass.new
@@ -135,9 +136,9 @@ class ImporterBaseController < ApplicationController
   end
 
   def update_from_params
-    if params[:import_settings].is_a?(Hash)
+    if params[:import_settings].present?
       @import.settings ||= {}
-      @import.settings.merge!(params[:import_settings])
+      @import.settings.merge!(params.respond_to?(:to_unsafe_hash) ? params.to_unsafe_hash['import_settings'] : params['import_settings'])
       @import.save!
     end
   end

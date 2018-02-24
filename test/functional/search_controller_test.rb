@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -62,26 +62,25 @@ class SearchControllerTest < ActionController::TestCase
 
   def test_search_for_contacts
     @request.session[:user_id] = 1
-    get :index
+    compatible_request :get, :index
     assert_response :success
-    assert_template 'index'
+    assert_select 'h2', 'Search'
 
-    get :index, :q => "ivan"
+    compatible_request :get, :index, :q => 'ivan'
     assert_response :success
-    assert_template 'index'
-    assert assigns(:results).include?(Contact.find(1))
+    assert_select 'h2', 'Search'
+    assert_match Contact.find(1).first_name, response.body
   end
 
   def test_search_for_contacts_by_email
     @request.session[:user_id] = 1
-    get :index
+    compatible_request :get, :index
     assert_response :success
-    assert_template 'index'
+    assert_select 'h2', 'Search'
 
-    get :index, :q => "marat@mail.ru"
+    compatible_request :get, :index, :q => 'marat@mail.ru'
     assert_response :success
-    assert_template 'index'
-    assert assigns(:results).include?(Contact.find(2))
+    assert_select 'h2', 'Search'
+    assert_match Contact.find(2).first_name, response.body
   end
-
 end

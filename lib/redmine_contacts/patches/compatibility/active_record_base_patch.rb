@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,20 +19,17 @@
 
 module RedmineContacts
   module Patches
-
     module ActiveRecordBasePatch
-      
-      def self.included(base) 
+      def self.included(base)
         base.send(:include, InstanceMethods)
         base.class_eval do
-          alias_method_chain :has_many, :contacts
+          alias_method :has_many_without_contacts, :has_many
+          alias_method :has_many, :has_many_with_contacts
         end
       end
 
-     
       module InstanceMethods
-
-        def has_many_with_contacts(name, param2=nil, *param3, &extension)
+        def has_many_with_contacts(name, param2 = nil, *param3, &extension)
           return has_many_without_contacts(name, param2, *param3, &extension) if param3 && param3.is_a?(Array) && param3[0] && param3[0][:through]
           if param2.nil?
             options = {}
@@ -52,12 +49,11 @@ module RedmineContacts
           end
         end
 
-
         def build_scope_and_options(options)
           scope_opts, opts = parse_options(options)
 
           unless scope_opts.empty?
-            scope = lambda do 
+            scope = lambda do
               scope_opts.inject(self) { |result, hash| result.send *hash }
             end
           end
@@ -76,11 +72,7 @@ module RedmineContacts
           [scope_opts, opts]
         end
       end
-
-
     end
-
-
   end
 end
 

@@ -1,8 +1,23 @@
 == Redmine CRM plugin changelog
 
 Redmine CRM plugin - customer relationship management plugin for redmine
-Copyright (C) 2010-2017 RedmineUP
+Copyright (C) 2010-2018 RedmineUP
 http://www.redmineup.com/
+
+== 2018-02-22 v4.1.2
+
+* Redmine 4.0 dev support
+* Select2 control issue's deal  
+* New CSV export UI for Contacts
+* Deals layout fixes
+* Show contacts deals on a company profile
+* Avatar image on click action changed to show 
+* Fixed contacts column output for issues table
+* Fixed deals pipeline bugs
+* Fixed bug with import_settings
+* Added missing assigned_to to Excel export
+* Email validator fixes
+* Duplications seach fixes
 
 == 2017-07-07 v4.1.1
 
@@ -15,7 +30,7 @@ http://www.redmineup.com/
 == 2017-05-30 v4.1.0
 
 * Added Select2 to contacts fields
-* Primary email was added to dublicate search
+* Primary email was added to dublicate search 
 * Chinese translation update
 * Fixed deal price precision bug
 * Fixed avatar upload on modal form

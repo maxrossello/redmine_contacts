@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,16 +19,16 @@
 
 class ContactsSettingsController < ApplicationController
   unloadable
-  before_filter :find_project_by_project_id, :authorize
+  before_action :find_project_by_project_id, :authorize
 
   def save
-    if params[:contacts_settings] && params[:contacts_settings].is_a?(Hash) then
-      settings = params[:contacts_settings]
+    settings = params[:contacts_settings]
+    settings = settings.to_unsafe_hash if settings.class.to_s == 'ActionController::Parameters'
+    if settings && settings.is_a?(Hash)
       settings.map do |k, v|
         ContactsSetting[k, @project.id] = v
       end
     end
     redirect_to :controller => 'projects', :action => 'settings', :id => @project, :tab => params[:tab]
   end
-
 end

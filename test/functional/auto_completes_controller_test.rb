@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -45,43 +45,35 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
   def setup
     RedmineContacts::TestCase.prepare
-
-    @controller = AutoCompletesController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
     @request.session[:user_id] = 1
   end
 
   def test_contacts_should_not_be_case_sensitive
-    get :contacts, :project_id => 'ecookbook', :q => 'ma'
+    compatible_request :get, :contacts, :project_id => 'ecookbook', :q => 'ma'
     assert_response :success
-    assert_not_nil assigns(:contacts)
-    assert assigns(:contacts).detect {|contact| contact.name.match /Marat/}
+    assert response.body.match /Marat/
   end
 
   def test_contacts_should_accept_term_param
-    get :contacts, :project_id => 'ecookbook', :term => 'ma'
+    compatible_request :get, :contacts, :project_id => 'ecookbook', :term => 'ma'
     assert_response :success
-    assert_not_nil assigns(:contacts)
-    assert assigns(:contacts).detect {|contact| contact.name.match /Marat/}
+    assert response.body.match /Marat/
   end
 
   def test_companies_should_not_be_case_sensitive
-    get :companies, :project_id => 'ecookbook', :q => 'domo'
+    compatible_request :get, :companies, :project_id => 'ecookbook', :q => 'domo'
     assert_response :success
-    assert_not_nil assigns(:companies)
-    assert assigns(:companies).detect {|contact| contact.name.match /Domoway/}
+    assert response.body.match /Domoway/
   end
 
   def test_companies_witth_spaces_should_be_found
-    get :companies, :project_id => 'ecookbook', :q => 'my c'
+    compatible_request :get, :companies, :project_id => 'ecookbook', :q => 'my c'
     assert_response :success
-    assert_not_nil assigns(:companies)
-    assert assigns(:companies).detect {|contact| contact.name.match /My company/}
+    assert response.body.match /My company/
   end
 
   def test_contacts_should_return_json
-    get :contacts, :project_id => 'ecookbook', :q => 'marat'
+    compatible_request :get, :contacts, :project_id => 'ecookbook', :q => 'marat'
     assert_response :success
     json = ActiveSupport::JSON.decode(response.body)
     assert_kind_of Array, json
@@ -93,7 +85,7 @@ class AutoCompletesControllerTest < ActionController::TestCase
   end
 
   def test_companies_should_return_json
-    get :companies, :project_id => 'ecookbook', :q => 'domo'
+    compatible_request :get, :companies, :project_id => 'ecookbook', :q => 'domo'
     assert_response :success
     json = ActiveSupport::JSON.decode(response.body)
     assert_kind_of Array, json
@@ -105,7 +97,7 @@ class AutoCompletesControllerTest < ActionController::TestCase
   end
 
   def test_contact_tags_should_return_json
-    get :contact_tags, :q => 'ma'
+    compatible_request :get, :contact_tags, :q => 'ma'
     assert_response :success
     json = ActiveSupport::JSON.decode(response.body)
     assert_kind_of Array, json
@@ -114,12 +106,11 @@ class AutoCompletesControllerTest < ActionController::TestCase
   end
 
   def test_taggable_tags_should_return_json
-    get :taggable_tags, :q => 'ma', :taggable_type => 'contact'
+    compatible_request :get, :taggable_tags, :q => 'ma', :taggable_type => 'contact'
     assert_response :success
     json = ActiveSupport::JSON.decode(response.body)
     assert_kind_of Array, json
     tag = json.last
     assert_match 'main', tag
   end
-
 end

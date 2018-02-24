@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-requires_redmine_crm :version_or_higher => '0.0.31' rescue raise "\n\033[31mRedmine requires newer redmine_crm gem version.\nPlease update with 'bundle update redmine_crm'.\033[0m"
+requires_redmine_crm :version_or_higher => '0.0.33' rescue raise "\n\033[31mRedmine requires newer redmine_crm gem version.\nPlease update with 'bundle update redmine_crm'.\033[0m"
 
 require 'redmine'
 
-CONTACTS_VERSION_NUMBER = '4.1.1'
+CONTACTS_VERSION_NUMBER = '4.1.2'
 CONTACTS_VERSION_TYPE = "Light version"
 
 if ActiveRecord::VERSION::MAJOR >= 4
@@ -51,11 +51,11 @@ Redmine::Plugin.register :redmine_contacts do
     permission :view_contacts, {
       :contacts => [:show, :index, :live_search, :contacts_notes, :context_menu],
       :notes => [:show]
-    }
+    }, :read => true
     permission :view_private_contacts, {
       :contacts => [:show, :index, :live_search, :contacts_notes, :context_menu],
       :notes => [:show]
-    }
+    }, :read => true
 
     permission :add_contacts, {
       :contacts => [:new, :create],

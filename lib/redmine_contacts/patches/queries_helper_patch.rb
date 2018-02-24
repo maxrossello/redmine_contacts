@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -27,10 +27,10 @@ module RedmineContacts
 
         base.class_eval do
           unloadable
-          alias_method_chain :column_value, :contacts
+          alias_method :column_value_without_contacts, :column_value
+          alias_method :column_value, :column_value_with_contacts
         end
       end
-
 
       module InstanceMethods
         def column_value_with_contacts(column, list_object, value)
@@ -45,19 +45,18 @@ module RedmineContacts
             [value].flatten.each do |contact|
               contacts_span << contact_tag(contact)
             end
-            contacts_span.join(", ")
+            contacts_span.join(', ').html_safe
           elsif column.name == :tags && list_object.is_a?(Contact)
             contact_tags = []
             [value].flatten.each do |tag|
               contact_tags << tag.name
             end
-            contact_tags.join(", ")
+            contact_tags.join(', ')
           else
             column_value_without_contacts(column, list_object, value)
           end
         end
       end
-
     end
   end
 end

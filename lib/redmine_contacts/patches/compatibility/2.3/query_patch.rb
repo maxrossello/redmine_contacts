@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 
 module RedmineContacts
   module Patches
-
     module QueryPatch
       def self.included(base) # :nodoc:
         base.send(:include, InstanceMethods)
@@ -30,7 +29,6 @@ module RedmineContacts
             VISIBILITY_ROLES   = 1
             VISIBILITY_PUBLIC  = 2
           end
-
         end
       end
     end
@@ -55,9 +53,7 @@ module RedmineContacts
       def visibility
         self.is_public ? VISIBILITY_PUBLIC : VISIBILITY_PRIVATE
       end
-
     end
-
   end
 end
 

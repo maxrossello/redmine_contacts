@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -26,10 +26,10 @@ module RedmineContacts
         base.class_eval do
           unloadable
 
-          alias_method_chain :administration_settings_tabs, :contacts
+          alias_method :administration_settings_tabs_without_contacts, :administration_settings_tabs
+          alias_method :administration_settings_tabs, :administration_settings_tabs_with_contacts
         end
       end
-
 
       module InstanceMethods
         # include ContactsHelper
@@ -37,14 +37,11 @@ module RedmineContacts
         def administration_settings_tabs_with_contacts
           tabs = administration_settings_tabs_without_contacts
 
-          tabs.push({ :name => 'money',
-            :partial => 'settings/contacts/money',
-            :label => :label_crm_money_settings })
-
+          tabs.push(:name => 'money',
+                    :partial => 'settings/contacts/money',
+                    :label => :label_crm_money_settings)
         end
-
       end
-
     end
   end
 end

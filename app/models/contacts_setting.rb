@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2010-2017 RedmineUP
+# Copyright (C) 2010-2018 RedmineUP
 # http://www.redmineup.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,13 +19,15 @@
 
 class ContactsSetting < ActiveRecord::Base
   unloadable
+  include Redmine::SafeAttributes
 
   TAX_TYPE_EXCLUSIVE = 1
   TAX_TYPE_INCLUSIVE = 2
 
   belongs_to :project
 
-  attr_accessible :name, :value, :project_id
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
+  safe_attributes 'name', 'value', 'project_id'
 
   cattr_accessor :settings
   acts_as_attachable
@@ -46,7 +48,7 @@ class ContactsSetting < ActiveRecord::Base
   def self.[]=(name, project_id, v)
     project_id = project_id.id if project_id.is_a?(Project)
     setting = find_or_default(name, project_id)
-    setting.value = (v ? v : "")
+    setting.value = (v ? v : '')
     @contacts_cached_settings[hk(name, project_id)] = nil
     setting.save
     setting.value
@@ -62,15 +64,15 @@ class ContactsSetting < ActiveRecord::Base
     end
   end
 
-    # Clears the settings cache
+  # Clears the settings cache
   def self.clear_cache
     @contacts_cached_settings.clear
     @contacts_cached_cleared_on = Time.now
-    logger.info "Contacts settings cache cleared." if logger
+    logger.info 'Contacts settings cache cleared.' if logger
   end
 
   def self.contact_name_format
-    Setting.plugin_redmine_contacts["name_format"] || :firstname_lastname
+    Setting.plugin_redmine_contacts['name_format'] || :firstname_lastname
   end
 
   def self.vcard?
@@ -82,43 +84,43 @@ class ContactsSetting < ActiveRecord::Base
   end
 
   def self.monochrome_tags?
-    !!Setting.plugin_redmine_contacts["monochrome_tags"]
+    !!Setting.plugin_redmine_contacts['monochrome_tags']
   end
 
   def self.contacts_show_in_top_menu?
-    !!Setting.plugin_redmine_contacts["contacts_show_in_top_menu"]
+    !!Setting.plugin_redmine_contacts['contacts_show_in_top_menu']
   end
 
   def self.contacts_show_in_app_menu?
-    !!Setting.plugin_redmine_contacts["contacts_show_in_app_menu"]
+    !!Setting.plugin_redmine_contacts['contacts_show_in_app_menu']
   end
 
   def self.default_country
-    Setting.plugin_redmine_contacts["default_country"]
+    Setting.plugin_redmine_contacts['default_country']
   end
 
   def self.cross_project_contacts?
-    Setting.plugin_redmine_contacts["cross_project_contacts"].to_i > 0
+    Setting.plugin_redmine_contacts['cross_project_contacts'].to_i > 0
   end
 
   # Finance
 
   def self.default_currency
-    Setting.plugin_redmine_contacts["default_currency"] || 'USD'
+    Setting.plugin_redmine_contacts['default_currency'] || 'USD'
   end
 
   def self.major_currencies
-    currencies = Setting.plugin_redmine_contacts["major_currencies"].to_s.split(',').select{|c| !c.blank?}.map(&:strip)
+    currencies = Setting.plugin_redmine_contacts['major_currencies'].to_s.split(',').select { |c| !c.blank? }.map(&:strip)
     currencies = %w(USD EUR GBP RUB CHF) if currencies.blank?
     currencies.compact.uniq
   end
 
   def self.default_tax
-    Setting.plugin_redmine_contacts["default_tax"].to_f
+    Setting.plugin_redmine_contacts['default_tax'].to_f
   end
 
   def self.tax_type
-    ((["1", "2"] & [Setting.plugin_redmine_contacts["tax_type"].to_s]).first || TAX_TYPE_EXCLUSIVE).to_i
+    ((['1', '2'] & [Setting.plugin_redmine_contacts['tax_type'].to_s]).first || TAX_TYPE_EXCLUSIVE).to_i
   end
 
   def self.tax_exclusive?
@@ -126,20 +128,20 @@ class ContactsSetting < ActiveRecord::Base
   end
 
   def self.thousands_delimiter
-    ([" ", ",", "."] & [Setting.plugin_redmine_contacts["thousands_delimiter"]]).first || " "
+    ([' ', ',', '.'] & [Setting.plugin_redmine_contacts['thousands_delimiter']]).first || ' '
   end
 
   def self.decimal_separator
-    ([",", "."] & [Setting.plugin_redmine_contacts["decimal_separator"]]).first || "."
+    ([',', '.'] & [Setting.plugin_redmine_contacts['decimal_separator']]).first || '.'
   end
 
   def self.disable_taxes?
-    !!Setting.plugin_redmine_contacts["disable_taxes"]
+    !!Setting.plugin_redmine_contacts['disable_taxes']
   end
 
   def self.post_address_format
-    unless Setting.plugin_redmine_contacts["post_address_format"].blank?
-      Setting.plugin_redmine_contacts["post_address_format"].to_s.strip
+    unless Setting.plugin_redmine_contacts['post_address_format'].blank?
+      Setting.plugin_redmine_contacts['post_address_format'].to_s.strip
     else
       "%street1%\n%street2%\n%city%, %postcode%\n%region%\n%country%"
     end
